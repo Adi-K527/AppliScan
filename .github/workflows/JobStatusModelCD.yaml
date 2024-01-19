@@ -9,7 +9,9 @@ on:
 
 env:
   AWS_REGION: ${{ secrets.AWS_REGION }}      
-  ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}        
+  ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}    
+  ACCOUNT_ID: $ {{ secrets.ACCOUNT_ID }} 
+  LAMBDA_FUNCTION: ${{ secrets.LAMBDA_FUNCTION }}   
 
 jobs:
   deploy:
@@ -41,3 +43,10 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./AWS/JobStatusModel
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+      - name: Deploy to lambda
+        id: deploy-lambda
+        env:
+          IMAGE_TAG: ${{ github.sha }}
+        run:
+          aws lambda update-function-code --function-name $LAMBDA_FUNCTION --image-uri $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
