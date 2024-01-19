@@ -6,13 +6,10 @@ on:
       - JobStatusModel
       - JobStatusModelDeployment
       - main
-  pull_request:
-    branches:
-      - JobStatusModelDeployment
 
 env:
   AWS_REGION: ${{ secrets.AWS_REGION }}      
-  ECR_REPOSITORY: ${{ env.ECR_REPOSITORY }}        
+  ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}        
 
 jobs:
   deploy:
