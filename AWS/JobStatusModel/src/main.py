@@ -4,6 +4,7 @@ import joblib
 import spacy
 import re
 import numpy as np
+import os
 
 
 def np_encoder(object):
@@ -12,13 +13,10 @@ def np_encoder(object):
 
 
 def lambda_handler(event, context):
-
-    #access key: AKIATAEY5FC5KMTYBH4M
-    #secret access key: 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
     
     bucket = boto3.resource('s3', 
-                            aws_access_key_id='AKIATAEY5FC5KMTYBH4M', 
-                            aws_secret_access_key='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').Bucket('appliscan-bucket')
+                            aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'), 
+                            aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY')).Bucket(os.getenv('AWS_BUCKET'))
     
     bucket.download_file('Models/Job_Status_Preprocessing_Pipeline.joblib', 
                                       '/tmp/preprocessing_pipeline.joblib')
