@@ -4,9 +4,8 @@ WORKDIR ${LAMBDA_TASK_ROOT}
 
 COPY requirements.txt .
 
-RUN yum -y install libgomp
-
-RUN pip install -r requirements.txt 
+RUN yum -y install libgomp \
+    pip install -r requirements.txt 
 
 COPY src/ .
 
