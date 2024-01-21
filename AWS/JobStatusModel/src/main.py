@@ -15,8 +15,8 @@ def np_encoder(object):
 def lambda_handler(event, context):
     
     bucket = boto3.resource('s3', 
-                            aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'), 
-                            aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY')).Bucket(os.getenv('AWS_BUCKET'))
+                            aws_access_key_id=os.getenv('AWS_ACCESS_KEY'), 
+                            aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS')).Bucket(os.getenv('AWS_BUCKET'))
     
     bucket.download_file('Models/JobStatusModel/Job_Status_Preprocessing_Pipeline.joblib', 
                                       '/tmp/preprocessing_pipeline.joblib')
