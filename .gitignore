@@ -5,3 +5,4 @@ client_secret.json
 EmailHandler/
 .venv/
 .conda/
+Models/NERModel/kaggle.json
