@@ -1,0 +1,14 @@
+json
+boto3
+spacy
+numpy
+os
+torch
+string
+nltk
+builtins
+nltk.corpus
+collections
+torch.utils.data
+keras.preprocessing.sequence
+transformers
