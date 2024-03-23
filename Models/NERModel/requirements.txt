@@ -1,8 +1,7 @@
 boto3
 spacy
-numpy
-os
-torch
+numpy >= 1.17.3
+torch 
 string
 nltk
 builtins
