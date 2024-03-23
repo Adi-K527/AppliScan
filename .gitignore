@@ -1,3 +1,8 @@
 Email-Data.csv
 GoogleNews-vectors-negative300.bin.gz
 *.env
+client_secret.json
+EmailHandler/
+.venv/
+.conda/
+Models/NERModel/kaggle.json

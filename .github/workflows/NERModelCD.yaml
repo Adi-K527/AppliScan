@@ -1,17 +1,17 @@
-name: Deploy to JobStatus Model
+name: Deploy to NER Model
 
 on:
   push:
     branches:
-      - JobStatusModel
-      - JobStatusModelDeployment
+      - nermodel
+      - nermodel_deployment
       - main
 
 env:
   AWS_REGION: ${{ secrets.AWS_REGION }}      
   ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}    
   ACCOUNT_ID: ${{ secrets.ACCOUNT_ID }} 
-  LAMBDA_FUNCTION: ${{ secrets.LAMBDA_FUNCTION }}  
+  LAMBDA_FUNCTION: ${{ secrets.LAMBDA_FUNCTION_NER }}  
 
 
 jobs:
@@ -41,7 +41,7 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./Models/JobStatusModel
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./Models/NERModel
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
