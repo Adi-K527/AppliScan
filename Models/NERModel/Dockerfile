@@ -6,6 +6,8 @@ COPY requirements.txt .
 
 RUN yum -y install libgomp
 
+RUN yum -y install libpython2.7-stdlib
+
 RUN pip install -r requirements.txt 
 
 COPY src/ .
