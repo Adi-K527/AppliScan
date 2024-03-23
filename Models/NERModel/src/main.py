@@ -106,6 +106,7 @@ def lambda_handler(event, context):
     company_name = extract_name(arr, probs)
 
 
+
     return {
         'statusCode': 200,
         'body': json.dumps({"Extracted Name ": company_name})
