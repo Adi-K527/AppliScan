@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - nermodel
+      - nermodel_deployment
       - main
 
 env:
