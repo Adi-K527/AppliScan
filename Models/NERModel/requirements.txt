@@ -2,11 +2,6 @@ boto3
 spacy
 numpy >= 1.17.3
 torch >= 1.9.0
-string
 nltk
-builtins
-nltk.corpus
-collections
-torch.utils.data
-keras.preprocessing.sequence
+keras
 transformers >= 4.11.3
