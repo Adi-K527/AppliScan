@@ -1,6 +1,5 @@
 import json
 import boto3
-import spacy
 import numpy as np
 import os
 import torch
@@ -45,7 +44,6 @@ def predict(model, input_str, device):
 
 
 def extract_name(arr, probs):
-  nlp = spacy.load("en_core_web_sm")
   visited = set()
   company_dict = defaultdict(int)
   for i in range(len(arr)):

@@ -6,7 +6,7 @@ COPY requirements.txt .
 
 RUN yum -y install libgomp
 
-RUN pip install -r requirements.txt 
+RUN pip install -r requirements.txt --no-cache-dir
 
 COPY src/ .
 
