@@ -6,11 +6,11 @@ import os
 import string
 import nltk
 import builtins
-# from nltk.corpus import stopwords
-# from collections import defaultdict
-# from torch.utils.data import TensorDataset
-# from keras.preprocessing.sequence import pad_sequences
-# from transformers import BertForTokenClassification, BertTokenizer, BertConfig
+from nltk.corpus import stopwords
+from collections import defaultdict
+from torch.utils.data import TensorDataset
+from keras.preprocessing.sequence import pad_sequences
+from transformers import BertForTokenClassification, BertTokenizer, BertConfig
 
 
 # def preprocess_input(s, tokenizer, MAX_LEN):
