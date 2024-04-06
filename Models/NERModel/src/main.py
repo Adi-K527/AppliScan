@@ -84,9 +84,11 @@ def extract_name(arr, probs):
 
 
 def lambda_handler(event, context):
-    nltk.download('stopwords')
+    print("------------------STARTED EXECUTION----------------------", "\n\n")
 
-    print("------------------DOWNLOADED STOPWORDS----------------------", "\n\n")
+    # nltk.download('stopwords')
+
+    # print("------------------DOWNLOADED STOPWORDS----------------------", "\n\n")
 
     bucket = boto3.resource('s3', 
                             aws_access_key_id=os.getenv('MY_AWS_ACCESS_THING'), 
