@@ -86,24 +86,30 @@ def extract_name(arr, probs):
 def lambda_handler(event, context):
     nltk.download('stopwords')
 
+    print("------------------DOWNLOADED STOPWORDS----------------------", "\n\n")
+
     bucket = boto3.resource('s3', 
                             aws_access_key_id=os.getenv('MY_AWS_ACCESS_THING'), 
                             aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS')).Bucket(os.getenv('AWS_BUCKET'))
     
 
-    bucket.download_file('Models/bert_model/config.json', '/tmp/bert_model/config.json')
-    bucket.download_file('Models/bert_model/model.safetensors', '/tmp/bert_model/model.safetensors')
+    bert_model_config = bucket.get_object('Models/bert_model/config.json', '/tmp/bert_model/config.json')
+    bert_movel_tensors = bucket.get_object('Models/bert_model/model.safetensors', '/tmp/bert_model/model.safetensors')
 
-    config = BertConfig.from_pretrained('/tmp/bert_model/config.json')
+    print("------------------GOT MODEL STUFF----------------------","\n\n")
+
+    config = BertConfig.from_pretrained(bert_model_config)
     model = BertForTokenClassification(config)
-    model.load_state_dict(torch.load('/tmp/bert_model/model.safetensors'))
+    model.load_state_dict(torch.load(bert_movel_tensors))
     tokenizer = BertTokenizer.from_pretrained('bert-base-cased', do_lower_case=False)
+
+    print("------------------LOADED ALL MODELS----------------------","\n\n")
 
     t, p, probs = predict(event['body'], tokenizer, 125)
     arr = list(builtins.zip(t, p))
     company_name = extract_name(arr, probs)
 
-
+    print("------------------EXTRACTED COMPANY NAME----------------------","\n\n")
 
     return {
         'statusCode': 200,
