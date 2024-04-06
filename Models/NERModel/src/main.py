@@ -2,7 +2,7 @@ import json
 import boto3
 import numpy as np
 import os
-import torch
+#import torch
 import string
 import nltk
 import builtins
