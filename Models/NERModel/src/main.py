@@ -1,11 +1,11 @@
 import json
-# import boto3
-# import numpy as np
-# import os
-# import torch
-# import string
-# import nltk
-# import builtins
+import boto3
+import numpy as np
+import os
+import torch
+import string
+import nltk
+import builtins
 # from nltk.corpus import stopwords
 # from collections import defaultdict
 # from torch.utils.data import TensorDataset
