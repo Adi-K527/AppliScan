@@ -1,6 +1,7 @@
 boto3
 numpy >= 1.17.3
 torch >= 1.8.1+cpu
+tensorflow-cpu
 nltk
 keras
 transformers >= 4.11.3
