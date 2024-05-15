@@ -13,6 +13,7 @@ from keras.preprocessing.sequence import pad_sequences
 from transformers import BertForTokenClassification, BertTokenizer, BertConfig
 
 
+
 # def preprocess_input(s, tokenizer, MAX_LEN):
 #   tokens = tokenizer.tokenize(s)
 #   tokens_converted = tokenizer.convert_tokens_to_ids(tokens)
