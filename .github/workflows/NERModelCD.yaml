@@ -53,4 +53,4 @@ jobs:
           ACCOUNT_ID: ${{ env.ACCOUNT_ID }} 
           LAMBDA_FUNCTION: ${{ env.LAMBDA_FUNCTION }} 
         run:
-          aws lambda update-function-code --function-name $LAMBDA_FUNCTION --image-uri $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
+          aws lambda update-function-code --function-name $LAMBDA_FUNCTION --image-uri $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG > /dev/null 2>&1
