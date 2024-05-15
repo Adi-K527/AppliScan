@@ -18,12 +18,12 @@ from nltk.corpus import stopwords
 print("from nltk.corpus import stopwords")
 from collections import defaultdict
 print("from collections import defaultdict")
-from torch.utils.data import TensorDataset
-print("from torch.utils.data import TensorDataset")
 from keras.preprocessing.sequence import pad_sequences
 print("from keras.preprocessing.sequence import pad_sequences")
 from transformers import BertForTokenClassification, BertTokenizer, BertConfig
 print("from transformers import BertForTokenClassification, BertTokenizer, BertConfig")
+from torch.utils.data import TensorDataset
+print("from torch.utils.data import TensorDataset")
 
 
 
