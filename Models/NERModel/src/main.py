@@ -106,8 +106,11 @@ def lambda_handler(event, context):
                             aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS')).Bucket(os.getenv('AWS_BUCKET'))
     
     bucket.download_file('Models/bert_model/config.json', '/tmp/config.json')
-    print("downloaded config.json")
     bucket.download_file('Models/bert_model/model.safetensors', '/tmp/model_safetensors')
+    bucket.download_file('Models/bert_model/bert_tokenizer/tokenizer_config.json', '/tmp/tokenizer_config.json')
+    bucket.download_file('Models/bert_model/bert_tokenizer/special_tokens_map.json', '/tmp/special_tokens_map.json')
+    bucket.download_file('Models/bert_model/bert_tokenizer/vocab.txt', '/tmp/vocab.txt')
+    
 
     model_safe_tensors = load_file('/tmp/model_safetensors')
 
@@ -116,7 +119,7 @@ def lambda_handler(event, context):
     config = BertConfig.from_pretrained("/tmp/config.json")
     model = BertForTokenClassification(config)
     model.load_state_dict(model_safe_tensors)
-    tokenizer = BertTokenizer.from_pretrained('bert-base-cased', do_lower_case=False)
+    tokenizer = BertTokenizer.from_pretrained('/tmp', do_lower_case=False)
 
     print("------------------LOADED ALL MODELS----------------------","\n\n")
 
