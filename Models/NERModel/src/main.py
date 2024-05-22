@@ -113,24 +113,15 @@ def lambda_handler(event, context):
                             aws_access_key_id=os.getenv('MY_AWS_ACCESS_THING'), 
                             aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS')).Bucket(os.getenv('AWS_BUCKET'))
     
-    try: 
-        bert_model_config = bucket.download_file('Models/bert_model/config.json', '/tmp/config.json')
-        print("downloaded config.json")
-        bert_movel_tensors = bucket.download_file('Models/bert_model/model.safetensors', '/tmp/model.safetensors')
-    except (NoCredentialsError, PartialCredentialsError) as e:
-        print(f"Credentials error: {e}")
-    except ClientError as e:
-        print(f"Client error: {e}")
-    except FileNotFoundError as e:
-        print(f"File not found error: {e}")
-    except Exception as e:
-        print(f"An unexpected error occurred: {e}")
+    bucket.download_file('Models/bert_model/config.json', '/tmp/config.json')
+    print("downloaded config.json")
+    bucket.download_file('Models/bert_model/model.safetensors', '/tmp/model.safetensors')
 
     print("------------------GOT MODEL STUFF----------------------","\n\n")
 
-    config = BertConfig.from_pretrained(bert_model_config)
+    config = BertConfig.from_pretrained("/tmp/config.json")
     model = BertForTokenClassification(config)
-    model.load_state_dict(torch.load(bert_movel_tensors))
+    model.load_state_dict(torch.load("/tmp/model.safetensors"))
     tokenizer = BertTokenizer.from_pretrained('bert-base-cased', do_lower_case=False)
 
     print("------------------LOADED ALL MODELS----------------------","\n\n")
