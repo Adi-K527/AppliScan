@@ -1,23 +1,15 @@
-print("actually started everything")
 import json
-print("import json")
 import boto3
-print("import boto3")
 import numpy as np
-print("import numpy as np")
 import os
-print("import os")
 import torch
-print("import torch")
 import string
-print("import string")
 import builtins
-print("import builtins")
 from collections import defaultdict
-print("from collections import defaultdict")
 from transformers import BertForTokenClassification, BertTokenizer, BertConfig
-print("from transformers import BertForTokenClassification, BertTokenizer, BertConfig")
 from botocore.exceptions import NoCredentialsError, PartialCredentialsError, ClientError
+from safetensors.torch import load_file
+
 
 
 def pad_sequences(arr, maxlen):
@@ -117,11 +109,13 @@ def lambda_handler(event, context):
     print("downloaded config.json")
     bucket.download_file('Models/bert_model/model.safetensors', '/tmp/model_safetensors')
 
+    model_safe_tensors = load_file('/tmp/model_safetensors')
+
     print("------------------GOT MODEL STUFF----------------------","\n\n")
 
     config = BertConfig.from_pretrained("/tmp/config.json")
     model = BertForTokenClassification(config)
-    model.load_state_dict(torch.load("/tmp/model_safetensors"))
+    model.load_state_dict(model_safe_tensors)
     tokenizer = BertTokenizer.from_pretrained('bert-base-cased', do_lower_case=False)
 
     print("------------------LOADED ALL MODELS----------------------","\n\n")
