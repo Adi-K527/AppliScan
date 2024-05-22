@@ -11,6 +11,8 @@ from botocore.exceptions import NoCredentialsError, PartialCredentialsError, Cli
 from safetensors.torch import load_file
 
 
+model = None
+tokenizer = None
 
 def pad_sequences(arr, maxlen):
     for i in range(maxlen - len(arr)):
@@ -97,29 +99,37 @@ def extract_name(arr, probs):
   return arr[0][0]
 
 
-
-def lambda_handler(event, context):
-    print("------------------STARTED EXECUTION----------------------", "\n\n")
-
+def download_files():
     bucket = boto3.resource('s3', 
-                            aws_access_key_id=os.getenv('MY_AWS_ACCESS_THING'), 
-                            aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS')).Bucket(os.getenv('AWS_BUCKET'))
+                        aws_access_key_id=os.getenv('MY_AWS_ACCESS_THING'), 
+                        aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS')).Bucket(os.getenv('AWS_BUCKET'))
     
     bucket.download_file('Models/bert_model/config.json', '/tmp/config.json')
     bucket.download_file('Models/bert_model/model.safetensors', '/tmp/model_safetensors')
     bucket.download_file('Models/bert_model/bert_tokenizer/tokenizer_config.json', '/tmp/tokenizer_config.json')
     bucket.download_file('Models/bert_model/bert_tokenizer/special_tokens_map.json', '/tmp/special_tokens_map.json')
     bucket.download_file('Models/bert_model/bert_tokenizer/vocab.txt', '/tmp/vocab.txt')
-    
 
-    model_safe_tensors = load_file('/tmp/model_safetensors')
 
-    print("------------------GOT MODEL STUFF----------------------","\n\n")
+def load_model_and_tokenizer():
+    global model, tokenizer
 
+    download_files()
+    model_safe_tensors = load_file('/tmp/model_safetensors')   
     config = BertConfig.from_pretrained("/tmp/config.json")
     model = BertForTokenClassification(config)
     model.load_state_dict(model_safe_tensors)
-    tokenizer = BertTokenizer.from_pretrained('/tmp', do_lower_case=False)
+    tokenizer = BertTokenizer.from_pretrained('/tmp', do_lower_case=False) 
+  
+
+
+def lambda_handler(event, context):
+    print("------------------STARTED EXECUTION----------------------", "\n\n")
+
+    if model == None or tokenizer == None:
+      load_model_and_tokenizer()
+
+    print("------------------GOT MODEL STUFF----------------------","\n\n")
 
     print("------------------LOADED ALL MODELS----------------------","\n\n")
 
