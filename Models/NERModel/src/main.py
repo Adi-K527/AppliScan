@@ -113,8 +113,8 @@ def lambda_handler(event, context):
                             aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS')).Bucket(os.getenv('AWS_BUCKET'))
     
 
-    bert_model_config = bucket.download_file('Models/bert_model/config.json', '/tmp/bert_model/config.json')
-    bert_movel_tensors = bucket.download_file('Models/bert_model/model.safetensors', '/tmp/bert_model/model.safetensors')
+    bert_model_config = bucket.download_file('Models/bert_model/config.json', '/tmp/config.json')
+    bert_movel_tensors = bucket.download_file('Models/bert_model/model.safetensors', '/tmp/model.safetensors')
 
     print("------------------GOT MODEL STUFF----------------------","\n\n")
 
