@@ -115,13 +115,13 @@ def lambda_handler(event, context):
     
     bucket.download_file('Models/bert_model/config.json', '/tmp/config.json')
     print("downloaded config.json")
-    bucket.download_file('Models/bert_model/model.safetensors', '/tmp/model.safetensors')
+    bucket.download_file('Models/bert_model/model.safetensors', '/tmp/model_safetensors')
 
     print("------------------GOT MODEL STUFF----------------------","\n\n")
 
     config = BertConfig.from_pretrained("/tmp/config.json")
     model = BertForTokenClassification(config)
-    model.load_state_dict(torch.load("/tmp/model.safetensors"))
+    model.load_state_dict(torch.load("/tmp/model_safetensors"))
     tokenizer = BertTokenizer.from_pretrained('bert-base-cased', do_lower_case=False)
 
     print("------------------LOADED ALL MODELS----------------------","\n\n")
