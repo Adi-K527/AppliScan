@@ -121,7 +121,7 @@ def lambda_handler(event, context):
 
     config = BertConfig.from_pretrained("/tmp/config.json")
     model = BertForTokenClassification(config)
-    model.load_state_dict("/tmp/model.safetensors")
+    model.load_state_dict(torch.load("/tmp/model.safetensors"))
     tokenizer = BertTokenizer.from_pretrained('bert-base-cased', do_lower_case=False)
 
     print("------------------LOADED ALL MODELS----------------------","\n\n")
