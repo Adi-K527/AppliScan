@@ -11,18 +11,12 @@ import torch
 print("import torch")
 import string
 print("import string")
-import nltk
-print("import nltk")
 import builtins
 print("import builtins")
-from nltk.corpus import stopwords
-print("from nltk.corpus import stopwords")
 from collections import defaultdict
 print("from collections import defaultdict")
 from transformers import BertForTokenClassification, BertTokenizer, BertConfig
 print("from transformers import BertForTokenClassification, BertTokenizer, BertConfig")
-from torch.utils.data import TensorDataset
-print("from torch.utils.data import TensorDataset")
 
 
 def pad_sequences(arr, maxlen):
@@ -41,7 +35,7 @@ def preprocess_input(s, tokenizer, MAX_LEN):
   attention_mask = torch.tensor(attention_mask, dtype=float)
   tokens_padded = torch.tensor(tokens_padded, dtype=float)
 
-  return TensorDataset(tokens_padded, attention_mask), tokens
+  return torch.utils.data.TensorDataset(tokens_padded, attention_mask), tokens
 
 
 
@@ -85,7 +79,17 @@ def extract_name(arr, probs):
       for x in range(l, r+1):
         visited.add(x)
 
-  stop_words = set(stopwords.words("english"))
+  stop_words = set(['','i','me','my','myself','we','our','ours','ourselves','you',"you're","you've","you'll","you'd",'your','yours','yourself',
+                    'yourselves','he','him','his','himself','she',"she's",'her','hers','herself','it',"it's",'its','itself','they','them','their',
+                    'theirs','themselves','what','which','who','whom','this','that',"that'll",'these','those','am','is','are','was','were','be',
+                    'been','being','have','has','had','having','do','does','did','doing','a','an','the','and','but','if','or','because','as',
+                    'until','while','of','at','by','for','with','about','against','between','into','through','during','before','after','above',
+                    'below','to','from','up','down','in','out','on','off','over','under','again','further','then','once','here','there','when',
+                    'where','why','how','all','any','both','each','few','more','most','other','some','such','no','nor','not','only','own','same',
+                    'so','than','too','very','s','t','can','will','just','don',"don't",'should',"should've",'now','d','ll','m','o','re','ve','y',
+                    'ain','aren',"aren't",'couldn',"couldn't",'didn',"didn't",'doesn',"doesn't",'hadn',"hadn't",'hasn',"hasn't",'haven',"haven't",
+                    'isn',"isn't",'ma','mightn',"mightn't",'mustn',"mustn't",'needn',"needn't",'shan',"shan't",'shouldn',"shouldn't",'wasn',
+                    "wasn't",'weren',"weren't",'won',"won't",'wouldn',"wouldn't",''])
 
   bad = []
   for i in company_dict:
@@ -103,10 +107,6 @@ def extract_name(arr, probs):
 
 def lambda_handler(event, context):
     print("------------------STARTED EXECUTION----------------------", "\n\n")
-
-    nltk.download('stopwords')
-
-    print("------------------DOWNLOADED STOPWORDS----------------------", "\n\n")
 
     bucket = boto3.resource('s3', 
                             aws_access_key_id=os.getenv('MY_AWS_ACCESS_THING'), 
@@ -133,5 +133,5 @@ def lambda_handler(event, context):
 
     return {
         'statusCode': 200,
-        'body': json.dumps({"Extracted Name ": "company_name"})
+        'body': json.dumps({"Extracted Name ": company_name})
     }
