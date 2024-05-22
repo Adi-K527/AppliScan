@@ -32,8 +32,8 @@ def preprocess_input(s, tokenizer, MAX_LEN):
 
 
 
-def predict(model, input_str, device):
-  s, initial_tokens = preprocess_input(input_str)
+def predict(model, input_str, device, tokenizer):
+  s, initial_tokens = preprocess_input(input_str, tokenizer, 125)
   model.eval()
   input_ids = s[0][0].unsqueeze(0).long().to(device)
   attention_mask = s[0][1].unsqueeze(0).long().to(device)
@@ -123,7 +123,7 @@ def lambda_handler(event, context):
 
     print("------------------LOADED ALL MODELS----------------------","\n\n")
 
-    t, p, probs = predict(event['body'], tokenizer, 125)
+    t, p, probs = predict(model, event['body'], 'cpu', tokenizer)
     arr = list(builtins.zip(t, p))
     company_name = extract_name(arr, probs)
 
