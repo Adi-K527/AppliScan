@@ -1,35 +1,41 @@
 import json
 import boto3
-import spacy
 import numpy as np
 import os
 import torch
 import string
-import nltk
 import builtins
-from nltk.corpus import stopwords
 from collections import defaultdict
-from torch.utils.data import TensorDataset
-from keras.preprocessing.sequence import pad_sequences
 from transformers import BertForTokenClassification, BertTokenizer, BertConfig
+from botocore.exceptions import NoCredentialsError, PartialCredentialsError, ClientError
+from safetensors.torch import load_file
+
+
+model = None
+tokenizer = None
+
+def pad_sequences(arr, maxlen):
+    for i in range(maxlen - len(arr)):
+      arr.append(0)
+    return [arr]
 
 
 def preprocess_input(s, tokenizer, MAX_LEN):
   tokens = tokenizer.tokenize(s)
   tokens_converted = tokenizer.convert_tokens_to_ids(tokens)
 
-  attention_mask = pad_sequences([[1.0 for i in range(len(tokens))]], maxlen=MAX_LEN, padding='post')
-  tokens_padded = pad_sequences([tokens_converted], maxlen=MAX_LEN, padding='post')
+  attention_mask = pad_sequences([1.0 for i in range(len(tokens))], maxlen=MAX_LEN)
+  tokens_padded = pad_sequences(tokens_converted, maxlen=MAX_LEN)
 
   attention_mask = torch.tensor(attention_mask, dtype=float)
   tokens_padded = torch.tensor(tokens_padded, dtype=float)
 
-  return TensorDataset(tokens_padded, attention_mask), tokens
+  return torch.utils.data.TensorDataset(tokens_padded, attention_mask), tokens
 
 
 
-def predict(model, input_str, device):
-  s, initial_tokens = preprocess_input(input_str)
+def predict(model, input_str, device, tokenizer):
+  s, initial_tokens = preprocess_input(input_str, tokenizer, 125)
   model.eval()
   input_ids = s[0][0].unsqueeze(0).long().to(device)
   attention_mask = s[0][1].unsqueeze(0).long().to(device)
@@ -45,7 +51,6 @@ def predict(model, input_str, device):
 
 
 def extract_name(arr, probs):
-  nlp = spacy.load("en_core_web_sm")
   visited = set()
   company_dict = defaultdict(int)
   for i in range(len(arr)):
@@ -69,7 +74,17 @@ def extract_name(arr, probs):
       for x in range(l, r+1):
         visited.add(x)
 
-  stop_words = set(stopwords.words("english"))
+  stop_words = set(['','i','me','my','myself','we','our','ours','ourselves','you',"you're","you've","you'll","you'd",'your','yours','yourself',
+                    'yourselves','he','him','his','himself','she',"she's",'her','hers','herself','it',"it's",'its','itself','they','them','their',
+                    'theirs','themselves','what','which','who','whom','this','that',"that'll",'these','those','am','is','are','was','were','be',
+                    'been','being','have','has','had','having','do','does','did','doing','a','an','the','and','but','if','or','because','as',
+                    'until','while','of','at','by','for','with','about','against','between','into','through','during','before','after','above',
+                    'below','to','from','up','down','in','out','on','off','over','under','again','further','then','once','here','there','when',
+                    'where','why','how','all','any','both','each','few','more','most','other','some','such','no','nor','not','only','own','same',
+                    'so','than','too','very','s','t','can','will','just','don',"don't",'should',"should've",'now','d','ll','m','o','re','ve','y',
+                    'ain','aren',"aren't",'couldn',"couldn't",'didn',"didn't",'doesn',"doesn't",'hadn',"hadn't",'hasn',"hasn't",'haven',"haven't",
+                    'isn',"isn't",'ma','mightn',"mightn't",'mustn',"mustn't",'needn',"needn't",'shan',"shan't",'shouldn',"shouldn't",'wasn',
+                    "wasn't",'weren',"weren't",'won',"won't",'wouldn',"wouldn't",''])
 
   bad = []
   for i in company_dict:
@@ -84,28 +99,45 @@ def extract_name(arr, probs):
   return arr[0][0]
 
 
+def download_files():
+    bucket = boto3.resource('s3', 
+                        aws_access_key_id=os.getenv('MY_AWS_ACCESS_THING'), 
+                        aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS')).Bucket(os.getenv('AWS_BUCKET'))
+    
+    bucket.download_file('Models/bert_model/config.json', '/tmp/config.json')
+    bucket.download_file('Models/bert_model/model.safetensors', '/tmp/model_safetensors')
+    bucket.download_file('Models/bert_model/bert_tokenizer/tokenizer_config.json', '/tmp/tokenizer_config.json')
+    bucket.download_file('Models/bert_model/bert_tokenizer/special_tokens_map.json', '/tmp/special_tokens_map.json')
+    bucket.download_file('Models/bert_model/bert_tokenizer/vocab.txt', '/tmp/vocab.txt')
+
+
+def load_model_and_tokenizer():
+    global model, tokenizer
+
+    download_files()
+    model_safe_tensors = load_file('/tmp/model_safetensors')   
+    config = BertConfig.from_pretrained("/tmp/config.json")
+    model = BertForTokenClassification(config)
+    model.load_state_dict(model_safe_tensors)
+    tokenizer = BertTokenizer.from_pretrained('/tmp', do_lower_case=False) 
+  
+
 
 def lambda_handler(event, context):
-    nltk.download('stopwords')
+    print("------------------STARTED EXECUTION----------------------", "\n\n")
 
-    bucket = boto3.resource('s3', 
-                            aws_access_key_id=os.getenv('MY_AWS_ACCESS_THING'), 
-                            aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS')).Bucket(os.getenv('AWS_BUCKET'))
-    
+    if model == None or tokenizer == None:
+      load_model_and_tokenizer()
 
-    bucket.download_file('Models/bert_model/config.json', '/tmp/bert_model/config.json')
-    bucket.download_file('Models/bert_model/model.safetensors', '/tmp/bert_model/model.safetensors')
+    print("------------------GOT MODEL STUFF----------------------","\n\n")
 
-    config = BertConfig.from_pretrained('/tmp/bert_model/config.json')
-    model = BertForTokenClassification(config)
-    model.load_state_dict(torch.load('/tmp/bert_model/model.safetensors'))
-    tokenizer = BertTokenizer.from_pretrained('bert-base-cased', do_lower_case=False)
+    print("------------------LOADED ALL MODELS----------------------","\n\n")
 
-    t, p, probs = predict(event['body'], tokenizer, 125)
+    t, p, probs = predict(model, event['body'], 'cpu', tokenizer)
     arr = list(builtins.zip(t, p))
     company_name = extract_name(arr, probs)
 
-
+    print("------------------EXTRACTED COMPANY NAME----------------------","\n\n")
 
     return {
         'statusCode': 200,
