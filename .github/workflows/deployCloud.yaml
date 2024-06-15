@@ -3,7 +3,7 @@ name: Deploy Cloud
 on:
   push:
     branches:
-      - Cloud-config
+      - cloud-config
 
 env:
   AWS_REGION: ${{ secrets.AWS_REGION }}      
