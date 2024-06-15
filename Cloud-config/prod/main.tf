@@ -25,11 +25,11 @@ provider "aws" {
 resource "aws_ecr_repository" "appliscan_ecr" {
   name = var.ecr_name
 
-  # provisioner "local-exec" {
-  #   command = <<-EOT
-  #     docker pull alpine
-  #     docker tag alpine appli-scan:latest ${aws_ecr_repository.repository.repository_url}:latest
-  #     docker push ${aws_ecr_repository.repository.repository_url}:latest
-  #   EOT
-  # }
+  provisioner "local-exec" {
+    command = <<-EOT
+      docker pull alpine
+      docker tag alpine appli-scan:latest ${aws_ecr_repository.repository.repository_url}:latest
+      docker push ${aws_ecr_repository.repository.repository_url}:latest
+    EOT
+  }
 }
