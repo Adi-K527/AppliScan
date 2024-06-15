@@ -22,7 +22,7 @@ const env = require('dotenv')
 const CLIENT_ID = process.env.CLIENT_ID
 const CLIENT_SECRET = process.env.CLIENT_SECRET
 const JWT_SECRET = process.env.JWT_SECRET
-const SCOPES =  process.env.SCOPES// services we want access to
+const SCOPES = process.env.SCOPES // services we want access to
 
 // callback uri that oauth server sends responses to
 const REDIRECT_URI = process.env.REDIRECT_URI
