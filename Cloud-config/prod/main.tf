@@ -29,7 +29,7 @@ resource "null_resource" "docker_operations" {
   provisioner "local-exec" {
     command = <<-EOT
       docker pull alpine
-      docker tag alpine appli-scan:latest ${aws_ecr_repository.appliscan_ecr.repository_url}:latest
+      docker tag alpine ${aws_ecr_repository.appliscan_ecr.repository_url}:latest
       docker push ${aws_ecr_repository.appliscan_ecr.repository_url}:latest
     EOT
   }
