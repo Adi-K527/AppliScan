@@ -36,7 +36,6 @@ jobs:
       - name: Deploy cloud
         id: deploy-cloud
         run: |
-          pwd
-          ls
+          cd Cloud-config/prod
           terraform init
           terraform apply
