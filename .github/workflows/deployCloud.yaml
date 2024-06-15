@@ -6,10 +6,10 @@ on:
       - cloud-config
 
 env:
-  AWS_REGION: ${{ secrets.AWS_REGION }}      
-  ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}    
   ACCOUNT_ID: ${{ secrets.ACCOUNT_ID }} 
-  LAMBDA_FUNCTION: ${{ secrets.LAMBDA_FUNCTION }}  
+  ACCESS_KEY: ${{secrets.AWS_ACCESS_KEY_ID}}
+  SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+  ECR_NAME: ${{secrets.ECR_NAME}}
 
 
 jobs:
@@ -38,4 +38,4 @@ jobs:
         run: |
           cd Cloud-config/prod
           terraform init
-          terraform apply
+          terraform apply -var "access_key=${{ env.ACCESS_KEY }}" -var "secret_access_key=${{ env.SECRET_ACCESS_KEY }}" -var "ecr_name=${{ env.ECR_NAME }}"
