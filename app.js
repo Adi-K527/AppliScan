@@ -20,12 +20,12 @@ const env = require('dotenv')
 
 // CLIENT_ID and CLIENT_SECRET defined in gcp project
 const CLIENT_ID = process.env.CLIENT_ID
-const CLIENT_SECRET = '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'
-const JWT_SECRET = 'e3a62530935093323d905de5ee7d5bb7171cd57669bb68582838ae9e7241787e'
-const SCOPES = ['openid','https://www.googleapis.com/auth/gmail.readonly']; // services we want access to
+const CLIENT_SECRET = process.env.CLIENT_SECRET
+const JWT_SECRET = process.env.JWT_SECRET
+const SCOPES =  process.env.SCOPES// services we want access to
 
 // callback uri that oauth server sends responses to
-const REDIRECT_URI = 'http://localhost:3000/auth/google'
+const REDIRECT_URI = process.env.REDIRECT_URI
 
 
 app.use(cors({credentials: true}))
