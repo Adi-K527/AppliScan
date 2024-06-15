@@ -1,9 +1,3 @@
-locals {
-  envs = {
-    for tuple in regexall("(.*)=(.*)", file("../../.env")) : tuple[0] => chomp(tuple[1]) 
-  }
-}
-
 variable "access_key" {
   description  = "AWS access key"
   type         = string
