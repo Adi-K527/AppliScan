@@ -37,6 +37,6 @@ jobs:
       - name: Deploy cloud
         id: deploy-cloud
         run: |
-          cd Cloud-config/prod
+          cd Terraform/prod
           terraform init
           terraform apply -auto-approve -var "access_key=${{ env.ACCESS_KEY }}" -var "secret_access_key=${{ env.SECRET_ACCESS_KEY }}" -var "ecr_name=${{ env.ECR_NAME }}"

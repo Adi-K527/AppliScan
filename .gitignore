@@ -6,5 +6,5 @@ EmailHandler/
 .venv/
 .conda/
 Models/NERModel/kaggle.json
-Cloud-config/prod/.terraform/
-Cloud-config/prod/.terraform.lock.hcl
+Terraform/prod/.terraform/
+Terraform/prod/.terraform.lock.hcl
