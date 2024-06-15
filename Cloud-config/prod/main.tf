@@ -7,7 +7,6 @@ terraform {
         version = "~>4.0"
     }
   }
-
   backend "s3" {
     bucket  = "appliscan-state-bucket"
     key     = "global/s3/terraform.tfstate"
