@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - cloud-config
+      - main
 
 env:
   ACCOUNT_ID: ${{ secrets.ACCOUNT_ID }} 
