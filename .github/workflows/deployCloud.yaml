@@ -39,4 +39,4 @@ jobs:
         run: |
           cd Cloud-config/prod
           terraform init
-          terraform apply -var "access_key=${{ env.ACCESS_KEY }}" -var "secret_access_key=${{ env.SECRET_ACCESS_KEY }}" -var "ecr_name=${{ env.ECR_NAME }}"
+          terraform apply -auto-approve -var "access_key=${{ env.ACCESS_KEY }}" -var "secret_access_key=${{ env.SECRET_ACCESS_KEY }}" -var "ecr_name=${{ env.ECR_NAME }}"
