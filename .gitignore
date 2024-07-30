@@ -8,3 +8,4 @@ EmailHandler/
 Models/NERModel/kaggle.json
 Terraform/prod/.terraform/
 Terraform/prod/.terraform.lock.hcl
+node_modules/
