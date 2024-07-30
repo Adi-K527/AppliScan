@@ -6,6 +6,6 @@ hyperopt
 xgboost==2.0.3
 setuptools
 scikit-learn
-spacy
+spacy==2.3.5
 pandas
 mlxtend==0.23.1
