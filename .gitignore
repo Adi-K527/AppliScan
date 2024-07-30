@@ -6,3 +6,4 @@ EmailHandler/
 .venv/
 .conda/
 Models/NERModel/kaggle.json
+node_modules/
