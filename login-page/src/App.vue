@@ -1,3 +1,35 @@
+<template>
+  <div id="app">
+    <component :is="currentView" @changeView="handleChangeView"></component>
+  </div>
+</template>
+
+<script>
+import SignIn from './components/SignIn.vue'
+import RecoverPassword from './components/RecoverPassword.vue'
+import SignUp from './components/SignUp.vue'
+
+export default {
+  name: 'App',
+  components: {
+    SignIn,
+    RecoverPassword,
+    SignUp
+  },
+  data() {
+    return {
+      currentView: 'SignIn'
+    }
+  },
+  methods: {
+    handleChangeView(view) {
+      this.currentView = view;
+    }
+  }
+}
+</script>
+
+<style>
 body {
     font-family: Arial, sans-serif;
     background-color: #121212;
@@ -148,3 +180,5 @@ input.error {
     color: red;
 }
 
+
+</style>

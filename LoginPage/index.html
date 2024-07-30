@@ -66,7 +66,7 @@
                 <label for="password">Password</label>
             </div>
             <p class="recover">
-                <a href="#">Recover Password</a>
+                <a href="#" id="recoverPasswordButton">Recover Password</a>
             </p>
             <input type="submit" class="btn" value="Sign In" name="signIn">
         </form>
@@ -82,6 +82,23 @@
             <button id="signUpButton">Sign Up</button>
         </div>
     </div>
+
+    <div class="container" id="recoverPassword" style="display:none;">
+        <h1 class="form-title">Recover Password</h1>
+        <form id="recoverPasswordForm" method="post" action="">
+            <div class="input-group">
+                <i class="fas fa-envelope"></i>
+                <input type="email" name="email" id="recoverEmail" placeholder="Email" required>
+                <label for="recoverEmail">Email</label>
+            </div>
+            <input type="submit" class="btn" value="Send Recovery Link">
+        </form>
+        <div class="links">
+            <p>Remembered your password?</p>
+            <button id="backToSignInButton">Sign In</button>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
