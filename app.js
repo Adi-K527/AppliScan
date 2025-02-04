@@ -1,12 +1,13 @@
-const express = require('express');
-const app = express();
-const querystring = require("querystring")
-const jwt = require("jsonwebtoken")
-const cookieParser = require('cookie-parser')
-const cors = require("cors")
-const fetch = require("node-fetch")
-const env = require('dotenv')
+import express from 'express';
+import querystring from 'querystring';
+import jwt from 'jsonwebtoken';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import fetch from 'node-fetch';
+import env from 'dotenv';
 
+const app = express();
+env.config()
 
 // 1. localhost:3000/
 // 2. Google auth redirect
@@ -22,7 +23,7 @@ const env = require('dotenv')
 const CLIENT_ID = process.env.CLIENT_ID
 const CLIENT_SECRET = process.env.CLIENT_SECRET
 const JWT_SECRET = process.env.JWT_SECRET
-const SCOPES = process.env.SCOPES // services we want access to
+const SCOPES = process.env.SCOPES.split(" ") // services we want access to
 
 // callback uri that oauth server sends responses to
 const REDIRECT_URI = process.env.REDIRECT_URI
@@ -48,7 +49,7 @@ app.get('/', (req, res) => {
 
 
 app.get("/auth/google", async (req, res) => {
-    values = {
+    const values = {
         code: req.query.code,
         client_id: CLIENT_ID,
         client_secret: CLIENT_SECRET,
@@ -100,6 +101,8 @@ app.get("/emails", async (req, res) => {
     },
   })
   const data = await emailRes.json()
+
+  console.log(data.messages.length)
 
   // Use the id's of the emails from the previous call to get a portion of the body of the emails
   const emails = []
