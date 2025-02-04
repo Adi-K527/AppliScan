@@ -7,11 +7,12 @@ on:
       - main
 
 env:
-  ACCOUNT_ID: ${{ secrets.ACCOUNT_ID }} 
-  ACCESS_KEY: ${{secrets.AWS_ACCESS_KEY_ID}}
-  SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
-  ECR_NAME: ${{secrets.ECR_NAME}}
-  AWS_REGION: ${{ secrets.AWS_REGION }}      
+  GOOGLE_CREDENTIALS:  ${{ secrets.GOOGLE_CREDENTIALS }}
+  ACCOUNT_ID:          ${{ secrets.ACCOUNT_ID }} 
+  ACCESS_KEY:          ${{secrets.AWS_ACCESS_KEY_ID}}
+  SECRET_ACCESS_KEY:   ${{secrets.AWS_SECRET_ACCESS_KEY}}
+  ECR_NAME:            ${{secrets.ECR_NAME}}
+  AWS_REGION:          ${{ secrets.AWS_REGION }}      
 
 
 jobs:
@@ -24,12 +25,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Google Auth
+        id: auth
+        uses: 'google-github-actions/auth@v1'
+        with:
+          credentials_json: '${{ env.GOOGLE_CREDENTIALS }}'
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@0e613a0980cbf65ed5b322eb7a1e075d28913a83
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+          aws-region:            ${{ env.AWS_REGION }}
       
       - name: Login to Amazon ECR
         id: login-ecr
