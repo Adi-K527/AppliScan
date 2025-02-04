@@ -8,7 +8,7 @@ terraform {
     }
   }
   backend "s3" {
-    bucket  = "appliscan-state-bucket"
+    bucket  = "appliscan-state-bucket-1615"
     key     = "global/s3/terraform.tfstate"
     region  = "us-east-1"
     encrypt = true
