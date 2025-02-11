@@ -26,7 +26,7 @@
       <i class="fab fa-facebook"></i>
     </div>
     <div class="links">
-      <p>Don't have an account yet?</p>
+      <p>Don't have an account yet? skjdfskdjfhksdjfhksjdf</p>
       <button @click="$emit('changeView', 'SignUp')">Sign Up</button>
     </div>
   </div>
