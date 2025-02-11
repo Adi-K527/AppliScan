@@ -39,10 +39,6 @@ resource "aws_s3_bucket_website_configuration" "appliscan_frontend_static_hostin
 }
 
 
-
-
-
-
 resource "aws_ecr_repository" "appliscan_ecr" {
   name = var.ecr_name
 }
