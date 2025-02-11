@@ -25,17 +25,14 @@
     },
     methods: {
       handleRecoverPassword() {
-        // Add your recover password logic here
-  
-        // If no errors, proceed with form submission
-        // Handle form submission logic here
+       // finsh function
       }
     }
   }
   </script>
   
   <style scoped>
-  /* Scoped styles specific to the RecoverPassword component */
+  
   .container {
     background: #1e1e1e;
     padding: 2em;
