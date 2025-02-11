@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h1 class="form-title">Sign In</h1>
+    <h1 class="form-title">Hi</h1>
     <form @submit.prevent="handleSignIn">
       <div class="input-group">
         <i class="fas fa-envelope"></i>
