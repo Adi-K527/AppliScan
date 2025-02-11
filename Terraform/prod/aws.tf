@@ -1,3 +1,48 @@
+resource "aws_s3_bucket" "appliscan_frontend" {
+  bucket = "appliscan-frontend"
+}
+
+resource "aws_s3_bucket_public_access_block" "appliscan_frontend_unblock" {
+  bucket = aws_s3_bucket.appliscan_frontend.id
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
+data "aws_iam_policy_document" "appliscan_frontend_public_access_document" {
+  statement {
+    actions = ["s3:GetObject"]
+    resources = ["${aws_s3_bucket.appliscan_frontend.arn}/*"]
+
+    effect = "Allow"
+
+    principals {
+      type = "AWS"
+      identifiers = ["*"]
+    }
+  }
+}
+
+resource "aws_s3_bucket_policy" "appliscan_frontend_public_access" {
+  bucket = aws_s3_bucket.appliscan_frontend.id
+  policy = data.aws_iam_policy_document.appliscan_frontend_public_access_document.json
+}
+
+resource "aws_s3_bucket_website_configuration" "appliscan_frontend_static_hosting" {
+  bucket = aws_s3_bucket.appliscan_frontend.id
+
+  index_document {
+    suffix = "index.html"
+  }
+}
+
+
+
+
+
+
 resource "aws_ecr_repository" "appliscan_ecr" {
   name = var.ecr_name
 }
