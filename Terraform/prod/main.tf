@@ -25,3 +25,51 @@ provider "google" {
   project     = "appliscan-413019"
   region      = "us-central1"
 }
+
+
+
+
+module "cloudfront_distribution" {
+  source         = "./modules/cloudfront"
+  s3_bucket_name = "appliscan-frontend"
+  cloudfront_id  = "E1Y7X66I2J9J8Y"
+}
+
+module "ecr_repository" {
+  source   = "./modules/elastic-container-registry"
+  ecr_name = "appli-scan"
+}
+
+module "model_function_job_status" {
+  source         = "./modules/lambda"
+  repository_url = module.ecr_repository.ecr_url
+  function_name  = "JobStatusModel"
+}
+
+module "model_function_ner" {
+  source         = "./modules/lambda"
+  repository_url = module.ecr_repository.ecr_url
+  function_name  = "NerModel"
+}
+
+module "api_gateway_endpoint_job_status" {
+  source            = "./modules/api-gateway"
+  path              = "JobStatusModel"
+  lambda_invoke_arn = module.model_function_job_status.invoke_arn
+}
+
+module "api_gateway_endpoint_job_status" {
+  source            = "./modules/api-gateway"
+  path              = "NerModel"
+  lambda_invoke_arn = module.model_function_ner.invoke_arn
+}
+
+module "gcp_registry" {
+  source = "./modules/artifact-registry"
+  registry_name = "appliscan-gcp-registry"
+}
+
+module "cloud_run_backend" {
+  source   = "./modules/cloud-run"
+  gcr_name = "appliscan-cloudrun-backend-8264"
+}

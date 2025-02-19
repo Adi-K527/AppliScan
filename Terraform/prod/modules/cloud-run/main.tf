@@ -1,5 +1,5 @@
-resource "google_cloud_run_service" "cr_backend" {
-  name     = "appliscan-cloudrun-backend-8264"
+resource "google_cloud_run_service" "cloud_run_service" {
+  name     = var.gcr_name
   location = "us-central1"
 
   template {
