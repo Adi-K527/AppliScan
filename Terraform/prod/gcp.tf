@@ -7,7 +7,6 @@ resource "google_artifact_registry_repository" "model_bucket_gcp_registry" {
   description   = "Docker repository for Appliscan backend"
 }
 
-
 resource "google_cloud_run_service" "cr_backend" {
   name     = "appliscan-cloudrun-backend-8264"
   location = "us-central1"
