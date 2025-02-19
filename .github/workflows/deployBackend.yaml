@@ -1,9 +1,9 @@
-name: "Deploy Backend"
+name: Deploy Backend
 
 on:
     workflow_run:
       workflows: 
-        - Set up cloud resources
+        - Deploy Cloud
       types:
         - completed
 
