@@ -22,6 +22,6 @@ provider "aws" {
 }
 
 provider "google" {
-  project     = "Appliscan"
+  project     = "appliscan-413019"
   region      = "us-central1"
 }
