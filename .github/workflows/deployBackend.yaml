@@ -47,12 +47,12 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ env.ARTIFACT_REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.BACKEND_SERVICE }}:latest
+          tags: gcr.io/${{ env.PROJECT_ID }}/${{ env.BACKEND_SERVICE }}:latest
 
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@main
         with:
-          image: ${{ env.ARTIFACT_REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.BACKEND_SERVICE }}:latest
+          image: gcr.io/${{ env.PROJECT_ID }}/${{ env.BACKEND_SERVICE }}:latest
           service: ${{ env.BACKEND_SERVICE }}
           region: us-central1
           platform: managed
