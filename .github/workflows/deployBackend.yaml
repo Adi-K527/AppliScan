@@ -15,7 +15,8 @@ env:
   ECR_NAME:            ${{ secrets.ECR_NAME }}
   AWS_REGION:          ${{ secrets.AWS_REGION }} 
   PROJECT_ID:          ${{ secrets.PROJECT_ID }}
-  BACKEND_SERVICE:     ${{ secrets.BACKEND_SERVICE }}  
+  BACKEND_SERVICE:     ${{ secrets.BACKEND_SERVICE }}
+  ARTIFACT_REGISTRY:   ${{ secrets.ARTIFACT_REGISTRY }}  
 
 
 jobs:
@@ -46,16 +47,13 @@ jobs:
         with:
           context: .
           push: true
-          tags: gcr.io/${{ env.PROJECT_ID }}/${{ env.BACKEND_SERVICE }}:latest
+          tags: ${{ env.ARTIFACT_REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.BACKEND_SERVICE }}:latest
 
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@main
         with:
-          image: gcr.io/${{ env.PROJECT_ID }}/${{ env.BACKEND_SERVICE }}:latest
+          image: ${{ env.ARTIFACT_REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.BACKEND_SERVICE }}:latest
           service: ${{ env.BACKEND_SERVICE }}
           region: us-central1
           platform: managed
           allow-unauthenticated: true
-          env_vars: |
-              FOO=bar
-              ZIP=zap
