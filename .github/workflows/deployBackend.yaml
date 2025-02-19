@@ -3,7 +3,7 @@ name: Deploy Backend
 on:
     push:
       branches:
-        - main
+        - aasd
 
 env:
   GOOGLE_CREDENTIALS:  ${{ secrets.GOOGLE_CREDENTIALS }}
