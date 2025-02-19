@@ -26,9 +26,6 @@ provider "google" {
   region      = "us-central1"
 }
 
-
-
-
 module "cloudfront_distribution" {
   source         = "./modules/cloudfront"
   s3_bucket_name = "appliscan-frontend"
@@ -58,7 +55,7 @@ module "api_gateway_endpoint_job_status" {
   lambda_invoke_arn = module.model_function_job_status.invoke_arn
 }
 
-module "api_gateway_endpoint_job_status" {
+module "api_gateway_endpoint_ner" {
   source            = "./modules/api-gateway"
   path              = "NerModel"
   lambda_invoke_arn = module.model_function_ner.invoke_arn
