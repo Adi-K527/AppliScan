@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - cloud-config
-      - main
 
 env:
   GOOGLE_CREDENTIALS:  ${{ secrets.GOOGLE_CREDENTIALS }}

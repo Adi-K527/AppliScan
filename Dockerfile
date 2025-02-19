@@ -2,7 +2,7 @@ FROM node:16.8.0
 
 WORKDIR /app
 
-ENV PORT 3000
+ENV PORT 8080
 
 COPY . .
 
