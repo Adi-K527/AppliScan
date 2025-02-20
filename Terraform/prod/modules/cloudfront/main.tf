@@ -40,7 +40,7 @@ resource "aws_s3_bucket_website_configuration" "s3_static_hosting" {
 
 resource "aws_cloudfront_distribution" "cloudfront_s3_distribution" {
   origin {
-    domain_name = aws_s3_bucket.s3_bucket.bucket_regional_domain_name
+    domain_name = aws_s3_bucket.s3_bucket.website_endpoint
     origin_id   = aws_s3_bucket.s3_bucket.bucket
   }
 
@@ -66,5 +66,5 @@ resource "aws_cloudfront_distribution" "cloudfront_s3_distribution" {
   is_ipv6_enabled = true
   price_class     = "PriceClass_100"
 
-  depends_on = [ aws_s3_bucket_policy.s3_public_access ]
+  depends_on = [ aws_s3_bucket_policy.s3_public_access ] 
 }
