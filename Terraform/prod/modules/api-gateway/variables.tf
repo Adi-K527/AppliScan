@@ -22,3 +22,8 @@ variable "api_root_resource_id" {
   description  = "API root resource ID"
   type         = string
 }
+
+variable "api_execution_arn" {
+  description  = "API execution ARN"
+  type         = string
+}

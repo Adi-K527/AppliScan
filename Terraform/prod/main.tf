@@ -62,6 +62,7 @@ module "api_gateway_endpoint_job_status" {
   lambda_function_name = "JobStatusModel"
   api_id               = aws_api_gateway_rest_api.appliscan_api.id
   api_root_resource_id = aws_api_gateway_rest_api.appliscan_api.root_resource_id
+  api_execution_arn    = aws_api_gateway_rest_api.appliscan_api.execution_arn 
 }
 
 module "api_gateway_endpoint_ner" {
@@ -71,6 +72,7 @@ module "api_gateway_endpoint_ner" {
   lambda_function_name = "NerModel"
   api_id               = aws_api_gateway_rest_api.appliscan_api.id
   api_root_resource_id = aws_api_gateway_rest_api.appliscan_api.root_resource_id
+  api_execution_arn    = aws_api_gateway_rest_api.appliscan_api.execution_arn 
 }
 
 module "gcp_registry" {

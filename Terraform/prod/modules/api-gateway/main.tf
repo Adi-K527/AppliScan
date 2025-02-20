@@ -31,5 +31,5 @@ resource "aws_lambda_permission" "api_gateway_permission_ner_model" {
   action        = "lambda:InvokeFunction"
   function_name = var.lambda_function_name
   principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_api_gateway_rest_api.appliscan_api.execution_arn}/*/*"
+  source_arn    = "${var.api_execution_arn}/*/*"
 }
