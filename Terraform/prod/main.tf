@@ -53,14 +53,14 @@ module "model_function_ner" {
 module "api_gateway_endpoint_job_status" {
   source               = "./modules/api-gateway"
   path                 = "JobStatusModel"
-  lambda_invoke_arn    = module.model_function_job_status.invoke_arn
+  lambda_invoke_arn    = module.model_function_job_status.lambda_arn
   lambda_function_name = "JobStatusModel"
 }
 
 module "api_gateway_endpoint_ner" {
   source               = "./modules/api-gateway"
   path                 = "NerModel"
-  lambda_invoke_arn    = module.model_function_ner.invoke_arn
+  lambda_invoke_arn    = module.model_function_ner.lambda_arn
   lambda_function_name = "NerModel"
 }
 
