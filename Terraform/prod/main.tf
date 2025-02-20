@@ -40,12 +40,14 @@ module "model_function_job_status" {
   source         = "./modules/lambda"
   repository_url = module.ecr_repository.ecr_url
   function_name  = "JobStatusModel"
+  depends_on = [ module.ecr_repository ]
 }
 
 module "model_function_ner" {
   source         = "./modules/lambda"
   repository_url = module.ecr_repository.ecr_url
   function_name  = "NerModel"
+  depends_on = [ module.ecr_repository ]
 }
 
 module "api_gateway_endpoint_job_status" {
