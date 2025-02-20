@@ -73,3 +73,4 @@ module "cloud_run_backend" {
   source   = "./modules/cloud-run"
   gcr_name = "appliscan-cloudrun-backend-8264"
 }
+
