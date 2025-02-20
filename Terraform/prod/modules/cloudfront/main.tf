@@ -40,8 +40,14 @@ resource "aws_s3_bucket_website_configuration" "s3_static_hosting" {
 
 resource "aws_cloudfront_distribution" "cloudfront_s3_distribution" {
   origin {
-    domain_name = aws_s3_bucket_website_configuration.s3_static_hosting.website_domain
+    domain_name = aws_s3_bucket_website_configuration.s3_static_hosting.website_endpoint
     origin_id   = aws_s3_bucket.s3_bucket.bucket
+    custom_origin_config {
+      http_port              = "80"
+      https_port             = "443"
+      origin_protocol_policy = "http-only"
+      origin_ssl_protocols   = ["TLSv1", "TLSv1.1", "TLSv1.2"]
+    }
   }
 
   default_cache_behavior {
