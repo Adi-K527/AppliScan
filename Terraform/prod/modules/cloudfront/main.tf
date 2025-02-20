@@ -40,7 +40,7 @@ resource "aws_s3_bucket_website_configuration" "s3_static_hosting" {
 
 resource "aws_cloudfront_distribution" "cloudfront_s3_distribution" {
   origin {
-    domain_name = aws_s3_bucket.s3_bucket.website_domain
+    domain_name = aws_s3_bucket.s3_bucket.bucket_domain_name
     origin_id   = aws_s3_bucket.s3_bucket.bucket
   }
 
