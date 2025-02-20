@@ -66,5 +66,5 @@ resource "aws_cloudfront_distribution" "cloudfront_s3_distribution" {
   is_ipv6_enabled = true
   price_class     = "PriceClass_100"
 
-  depends_on = [ aws_s3_bucket.s3_bucket ]
+  depends_on = [ aws_s3_bucket_policy.s3_public_access ]
 }
