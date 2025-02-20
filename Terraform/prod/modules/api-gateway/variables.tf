@@ -3,6 +3,11 @@ variable "path" {
   type         = string
 }
 
+variable "lambda_function_name" {
+  description  = "Associated Lambda function name"
+  type         = string
+}
+
 variable "lambda_invoke_arn" {
   description  = "Invoke ARN for associated Lambda function"
   type         = string

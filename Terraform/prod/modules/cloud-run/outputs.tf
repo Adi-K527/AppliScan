@@ -1,3 +1,3 @@
 output "gcr_name" {
-    value = cloud_run_service.name
+    value = google_cloud_run_service.cloud_run_service.name
 }

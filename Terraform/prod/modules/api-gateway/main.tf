@@ -34,7 +34,7 @@ resource "aws_api_gateway_deployment" "api_deployment" {
 resource "aws_lambda_permission" "api_gateway_permission_ner_model" {
   statement_id  = "AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
-  function_name = var.lambda_function.function_name
+  function_name = var.lambda_function_name
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_api_gateway_rest_api.appliscan_api.execution_arn}/*/*"
 }

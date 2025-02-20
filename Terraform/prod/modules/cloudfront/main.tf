@@ -64,5 +64,4 @@ resource "aws_cloudfront_distribution" "cloudfront_s3_distribution" {
   enabled         = true
   is_ipv6_enabled = true
   price_class     = "PriceClass_100"
-  id              = var.cloudfront_id
 }

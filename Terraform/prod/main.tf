@@ -29,7 +29,6 @@ provider "google" {
 module "cloudfront_distribution" {
   source         = "./modules/cloudfront"
   s3_bucket_name = "appliscan-frontend"
-  cloudfront_id  = "E1Y7X66I2J9J8Y"
 }
 
 module "ecr_repository" {
@@ -50,15 +49,17 @@ module "model_function_ner" {
 }
 
 module "api_gateway_endpoint_job_status" {
-  source            = "./modules/api-gateway"
-  path              = "JobStatusModel"
-  lambda_invoke_arn = module.model_function_job_status.invoke_arn
+  source               = "./modules/api-gateway"
+  path                 = "JobStatusModel"
+  lambda_invoke_arn    = module.model_function_job_status.invoke_arn
+  lambda_function_name = "JobStatusModel"
 }
 
 module "api_gateway_endpoint_ner" {
-  source            = "./modules/api-gateway"
-  path              = "NerModel"
-  lambda_invoke_arn = module.model_function_ner.invoke_arn
+  source               = "./modules/api-gateway"
+  path                 = "NerModel"
+  lambda_invoke_arn    = module.model_function_ner.invoke_arn
+  lambda_function_name = "NerModel"
 }
 
 module "gcp_registry" {
