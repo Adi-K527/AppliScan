@@ -12,3 +12,13 @@ variable "lambda_invoke_arn" {
   description  = "Invoke ARN for associated Lambda function"
   type         = string
 }
+
+variable "api_id" {
+  description  = "API ID"
+  type         = string
+}
+
+variable "api_root_resource_id" {
+  description  = "API root resource ID"
+  type         = string
+}

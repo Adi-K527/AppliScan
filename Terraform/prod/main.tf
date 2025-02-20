@@ -50,11 +50,18 @@ module "model_function_ner" {
   depends_on = [ module.ecr_repository ]
 }
 
+resource "aws_api_gateway_rest_api" "appliscan_api" {
+  name         = "Appliscan"
+  description  = "Appliscan api to interact with models."
+}
+
 module "api_gateway_endpoint_job_status" {
   source               = "./modules/api-gateway"
   path                 = "JobStatusModel"
   lambda_invoke_arn    = module.model_function_job_status.lambda_arn
   lambda_function_name = "JobStatusModel"
+  api_id               = aws_api_gateway_rest_api.appliscan_api.id
+  api_root_resource_id = aws_api_gateway_rest_api.appliscan_api.root_resource_id
 }
 
 module "api_gateway_endpoint_ner" {
@@ -62,6 +69,8 @@ module "api_gateway_endpoint_ner" {
   path                 = "NerModel"
   lambda_invoke_arn    = module.model_function_ner.lambda_arn
   lambda_function_name = "NerModel"
+  api_id               = aws_api_gateway_rest_api.appliscan_api.id
+  api_root_resource_id = aws_api_gateway_rest_api.appliscan_api.root_resource_id
 }
 
 module "gcp_registry" {
