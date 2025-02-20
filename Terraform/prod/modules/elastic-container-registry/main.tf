@@ -11,5 +11,9 @@ resource "null_resource" "docker_operations" {
     EOT
   }
 
+  triggers = {
+    always_run = timestamp()
+  }
+
   depends_on = [aws_ecr_repository.ecr_repo]
 }
