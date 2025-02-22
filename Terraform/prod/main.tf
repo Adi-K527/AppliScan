@@ -83,7 +83,7 @@ module "kinesis_data_firehose" {
 }
 
 module "gcp_registry" {
-  source = "./modules/artifact-registry"
+  source        = "./modules/artifact-registry"
   registry_name = "appliscan-gcp-registry"
 }
 

@@ -5,7 +5,7 @@ resource "aws_s3_bucket" "firehose_delivery_bucket" {
 module "lambda_transformer" {
   source          = "../lambda"
   function_name   = "firehose-transformer"
-  source_file    = var.lambda_source_file
+  source_file     = var.lambda_source_file
   container_based = false
 }
 
@@ -14,8 +14,8 @@ resource "aws_iam_role" "firehose_role" {
   name = "firehose_delivery_role"
 
   assume_role_policy = jsonencode({
-    Version   = "2012-10-17"
-    Statement = [{
+    Version     = "2012-10-17"
+    Statement   = [{
       Action    = "sts:AssumeRole"
       Effect    = "Allow"
       Principal = {
@@ -30,8 +30,8 @@ resource "aws_iam_policy" "firehose_s3_policy" {
   description = "Allow Firehose to write to S3"
 
   policy = jsonencode({
-    Version   = "2012-10-17"
-    Statement = [{
+    Version    = "2012-10-17"
+    Statement  = [{
       Action   = ["s3:PutObject"]
       Effect   = "Allow"
       Resource = "${aws_s3_bucket.firehose_delivery_bucket.arn}/*"

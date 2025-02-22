@@ -25,8 +25,8 @@ data "aws_iam_policy_document" "s3_public_access_document" {
 }
 
 resource "aws_s3_bucket_policy" "s3_public_access" {
-  bucket = aws_s3_bucket.s3_bucket.id
-  policy = data.aws_iam_policy_document.s3_public_access_document.json
+  bucket     = aws_s3_bucket.s3_bucket.id
+  policy     = data.aws_iam_policy_document.s3_public_access_document.json
   depends_on = [ aws_s3_bucket_public_access_block.s3_bucket_unblock ]
 }
 
@@ -72,5 +72,5 @@ resource "aws_cloudfront_distribution" "cloudfront_s3_distribution" {
   is_ipv6_enabled = true
   price_class     = "PriceClass_100"
 
-  depends_on = [ aws_s3_bucket_policy.s3_public_access ] 
+  depends_on      = [ aws_s3_bucket_policy.s3_public_access ] 
 }
