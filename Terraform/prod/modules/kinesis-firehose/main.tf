@@ -49,6 +49,7 @@ resource "aws_iam_role_policy_attachment" "firehose_s3" {
 resource "aws_kinesis_firehose_delivery_stream" "email_stream_processor" {
   name        = var.firehose_name
   destination = "extended_s3"
+  depends_on  = [ module.lambda_transformer ]
 
   extended_s3_configuration {
     role_arn   = aws_iam_role.firehose_role.arn
