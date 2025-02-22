@@ -69,3 +69,4 @@ resource "aws_kinesis_firehose_delivery_stream" "email_stream_processor" {
     }
   }
 }
+
