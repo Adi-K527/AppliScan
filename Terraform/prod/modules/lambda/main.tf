@@ -51,7 +51,7 @@ resource "aws_lambda_function" "lambda_container_based" {
 data "archive_file" "lambda_zip" {
   count       = var.container_based ? 0 : 1
   type        = "zip"
-  source_file = "../code-files/${var.lambda_filename}.py"
+  source_file = "../../code-files/${var.lambda_filename}.py"
   output_path = "${var.lambda_filename}.zip"
 }
 
