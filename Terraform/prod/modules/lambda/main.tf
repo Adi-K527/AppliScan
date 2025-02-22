@@ -41,8 +41,26 @@ resource "aws_iam_role_policy_attachment" "lambda_policy_attachment" {
 }
 
 resource "aws_lambda_function" "lambda" {
+  count          = var.container_based ? 1 : 0
   image_uri      = "${var.repository_url}:latest"
   function_name  = var.function_name
   package_type   = "Image"
   role           = aws_iam_role.iam_for_lambda.arn
+}
+
+data "archive_file" "lambda_zip" {
+  count       = var.container_based ? 0 : 1
+  type        = "zip"
+  source_file = "../code-files/${var.lambda_filename}.py"
+  output_path = "${var.lambda_filename}.zip"
+}
+
+resource "aws_lambda_function" "lambda" {
+  count            = var.container_based ? 0 : 1
+  function_name    = var.function_name
+  runtime          = "python3.11"
+  handler          = "lambda_function.lambda_handler"
+  role             = aws_iam_role.iam_for_lambda.arn
+  filename         = data.archive_file.lambda_zip[0].output_path
+  source_code_hash = data.archive_file.lambda_zip[0].output_base64sha256
 }

@@ -40,14 +40,14 @@ module "model_function_job_status" {
   source         = "./modules/lambda"
   repository_url = module.ecr_repository.ecr_url
   function_name  = "JobStatusModel"
-  depends_on = [ module.ecr_repository ]
+  depends_on     = [ module.ecr_repository ]
 }
 
 module "model_function_ner" {
   source         = "./modules/lambda"
   repository_url = module.ecr_repository.ecr_url
   function_name  = "NerModel"
-  depends_on = [ module.ecr_repository ]
+  depends_on     = [ module.ecr_repository ]
 }
 
 resource "aws_api_gateway_rest_api" "appliscan_api" {
@@ -73,6 +73,12 @@ module "api_gateway_endpoint_ner" {
   api_id               = aws_api_gateway_rest_api.appliscan_api.id
   api_root_resource_id = aws_api_gateway_rest_api.appliscan_api.root_resource_id
   api_execution_arn    = aws_api_gateway_rest_api.appliscan_api.execution_arn 
+}
+
+module "kinesis_data_firehose" {
+  source         = "./modules/kinesis-firehose"
+  firehose_name  = "appliscan-email-preprocessor"
+  s3_bucket_name = "appliscan-transformed-emails"
 }
 
 module "gcp_registry" {
