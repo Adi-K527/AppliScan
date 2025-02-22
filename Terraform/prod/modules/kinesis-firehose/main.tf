@@ -26,8 +26,8 @@ resource "aws_iam_role" "firehose_role" {
 }
 
 resource "aws_iam_policy" "firehose_policy" {
-  name        = "firehose_s3_policy"
-  description = "Allow Firehose to write to S3"
+  name        = "firehose_policy"
+  description = "Allow Firehose to write to S3 and invoke Lambda"
 
   policy = jsonencode({
     Version    = "2012-10-17"
