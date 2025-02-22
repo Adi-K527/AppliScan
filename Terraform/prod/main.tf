@@ -76,9 +76,10 @@ module "api_gateway_endpoint_ner" {
 }
 
 module "kinesis_data_firehose" {
-  source         = "./modules/kinesis-firehose"
-  firehose_name  = "appliscan-email-preprocessor"
-  s3_bucket_name = "appliscan-transformed-emails"
+  source             = "./modules/kinesis-firehose"
+  firehose_name      = "appliscan-email-preprocessor"
+  s3_bucket_name     = "appliscan-transformed-emails"
+  lambda_source_file = "./code-files/firehose-transformer.py"
 }
 
 module "gcp_registry" {

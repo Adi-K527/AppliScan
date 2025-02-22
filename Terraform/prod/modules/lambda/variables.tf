@@ -15,7 +15,7 @@ variable "container_based" {
   default      = true
 }
 
-variable "lambda_filename" {
+variable "source_file" {
   description  = "Lambda function source file"
   type         = string
   default      = "test"

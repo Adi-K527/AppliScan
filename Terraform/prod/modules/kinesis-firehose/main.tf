@@ -5,7 +5,7 @@ resource "aws_s3_bucket" "firehose_delivery_bucket" {
 module "lambda_transformer" {
   source          = "../lambda"
   function_name   = "firehose-transformer"
-  lambda_filename = "firehose-transformer"
+  source_file    = var.lambda_source_file
   container_based = false
 }
 
