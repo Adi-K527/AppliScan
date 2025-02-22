@@ -25,7 +25,7 @@ resource "aws_iam_role" "firehose_role" {
   })
 }
 
-resource "aws_iam_policy" "firehose_s3_policy" {
+resource "aws_iam_policy" "firehose_policy" {
   name        = "firehose_s3_policy"
   description = "Allow Firehose to write to S3"
 
@@ -35,13 +35,18 @@ resource "aws_iam_policy" "firehose_s3_policy" {
       Action   = ["s3:PutObject"]
       Effect   = "Allow"
       Resource = "${aws_s3_bucket.firehose_delivery_bucket.arn}/*"
+    },
+    {
+      Action   = ["lambda:InvokeFunction"]
+      Effect   = "Allow"
+      Resource = module.lambda_transformer.lambda_arn
     }]
   })
 }
 
-resource "aws_iam_role_policy_attachment" "firehose_s3" {
+resource "aws_iam_role_policy_attachment" "firehose_policy_attachment" {
   role       = aws_iam_role.firehose_role.name
-  policy_arn = aws_iam_policy.firehose_s3_policy.arn
+  policy_arn = aws_iam_policy.firehose_policy.arn
 }
 #########################################################################
 
