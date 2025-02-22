@@ -40,7 +40,7 @@ resource "aws_iam_role_policy_attachment" "lambda_policy_attachment" {
   policy_arn = aws_iam_policy.lambda_policy.arn
 }
 
-resource "aws_lambda_function" "lambda" {
+resource "aws_lambda_function" "lambda_container_based" {
   count          = var.container_based ? 1 : 0
   image_uri      = "${var.repository_url}:latest"
   function_name  = var.function_name
@@ -55,7 +55,7 @@ data "archive_file" "lambda_zip" {
   output_path = "${var.lambda_filename}.zip"
 }
 
-resource "aws_lambda_function" "lambda" {
+resource "aws_lambda_function" "lambda_standard" {
   count            = var.container_based ? 0 : 1
   function_name    = var.function_name
   runtime          = "python3.11"
