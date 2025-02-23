@@ -5,9 +5,17 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import fetch from 'node-fetch';
 import env from 'dotenv';
+import AWS from 'aws-sdk'
+import cron from 'node-cron'
 
 const app = express();
 env.config()
+
+AWS.config.update({
+    region: 'us-east-1'
+})
+
+const dynamodbClient = new AWS.DynamoDB.DocumentClient()
 
 // 1. localhost:3000/
 // 2. Google auth redirect
@@ -28,6 +36,7 @@ const SCOPES        = process.env.SCOPES.split(" ") // services we want access t
 // callback uri that oauth server sends responses to
 const REDIRECT_URI = process.env.REDIRECT_URI
 
+let REFRESH_TOKEN = ""
 
 app.use(cors({credentials: true}))
 app.use(cookieParser())
@@ -65,7 +74,9 @@ app.get("/auth/google", async (req, res) => {
       },
       body: new URLSearchParams(values),
     })
-    const { id_token, access_token } = await authRes.json()
+    const { id_token, access_token, refresh_token } = await authRes.json()
+    REFRESH_TOKEN = refresh_token
+    console.log(REFRESH_TOKEN)
 
     // Get google user info by making call to userinfo google api using the access token we just got
     const googleUserRes = await fetch(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${access_token}`, {
@@ -77,16 +88,48 @@ app.get("/auth/google", async (req, res) => {
     const googleUser = await googleUserRes.json()
 
     // Encode user info with jwt
-    const jwt_token = jwt.sign({access_token, id_token, id: googleUser.id}, JWT_SECRET)
+    const jwt_token = jwt.sign({access_token, id_token, refresh_token, id: googleUser.id}, JWT_SECRET)
     res.cookie("auth_token", jwt_token, {
-        maxAge: 900000,
+        maxAge:   new Date(Date.now() + 100 * 365 * 24 * 60 * 60 * 1000),
         httpOnly: true,
-        secure: false
+        secure:   false
     })
+
+    const params = {
+        TableName: "Appliscan_Email_Table",
+        Item: {
+            UserId:     "12345",
+            EmailToken: jwt_token,
+        }
+    }
+    
+    dynamodbClient.put(params, (err, data) => {
+        if (err) {
+          console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
+        } else {
+          console.log("PutItem succeeded:", JSON.stringify(data, null, 2));
+        }
+    });
 
     res.redirect("http://localhost:3000/emails")
 })
 
+const getEmailBody = (emailData) => {
+    if (emailData.payload) {
+        if (emailData.payload.parts) {
+            for (let part of emailData.payload.parts) {
+                if (part.mimeType === "text/plain") {
+                    return Buffer.from(part.body.data, "base64").toString("utf-8");
+                }
+            }
+        }
+    
+        if (emailData.payload.body && emailData.payload.body.data) {
+            return Buffer.from(emailData.payload.body.data, "base64").toString("utf-8");
+        }
+    }
+    return "No body content found";
+}
 
 app.get("/emails", async (req, res) => {
   // validate oauth token is present in jwt cookie
@@ -104,23 +147,62 @@ app.get("/emails", async (req, res) => {
   })
   const data = await emailRes.json()
 
-  console.log(data.messages.length)
+  if (!data.messages) {
+    return res.status(200).json({message: {}})
+  }
 
   // Use the id's of the emails from the previous call to get a portion of the body of the emails
-  const emails = []
+  const emails = [];
   for (let i = 0; i < data.messages.length; i++) {
-    const res = await fetch('https://gmail.googleapis.com/gmail/v1/users/' + authCreds.id + '/messages/' + data.messages[i].id, {
+    const res = await fetch(`https://gmail.googleapis.com/gmail/v1/users/${authCreds.id}/messages/${data.messages[i].id}?format=full`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${authCreds.access_token}`,
-        Accept: 'application/json'
+        Accept: "application/json",
       },
-    })
-
-    const snippet = await res.json()
-    emails.push(snippet.snippet)
+    });
+  
+    const emailData = await res.json();  
+    const body = getEmailBody(emailData);
+    emails.push(body);
   }
   res.status(200).json({message: emails})
 })
+
+
+const refreshAccessToken = async (refreshToken) => {
+    const values = {
+        client_id: CLIENT_ID,
+        client_secret: CLIENT_SECRET,
+        refresh_token: refreshToken,
+        grant_type: 'refresh_token',
+    };
+
+    try {
+        const authRes = await fetch("https://oauth2.googleapis.com/token", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams(values),
+        });
+
+        const { access_token } = await authRes.json();
+        if (access_token) {
+            console.log('Access token refreshed:', access_token);
+            // Save the new access token to your database or session
+        } else {
+            console.error('Error refreshing access token');
+        }
+    } catch (error) {
+        console.error('Error refreshing access token:', error);
+    }
+};
+
+// Set up the cron job to run every 55 minutes to refresh the token before it expires
+cron.schedule('*/1 * * * *', () => {
+    console.log('Running token refresh job...');
+    refreshAccessToken(REFRESH_TOKEN);
+});
+
+
 
 app.listen(3000, () => {console.log(`Server is running on http://localhost:3000`)});
