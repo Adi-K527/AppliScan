@@ -79,7 +79,12 @@ module "kinesis_data_firehose" {
   source             = "./modules/kinesis-firehose"
   firehose_name      = "appliscan-email-preprocessor"
   s3_bucket_name     = "appliscan-transformed-emails"
-  lambda_source_file = "./code-files/firehose-transformer.py"
+  lambda_source_file = "./code-files/firehose/firehose-transformer.py"
+}
+
+module "email_dynamodb_table" {
+  source     = "./modules/dynamodb"
+  table_name = "Appliscan_Email_Table"
 }
 
 module "gcp_registry" {
