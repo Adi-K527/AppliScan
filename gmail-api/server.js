@@ -106,6 +106,7 @@ const getEmailBody = (emailData) => {
 app.get("/emails", async (req, res) => {
   // validate oauth token is present in jwt cookie
   const auth_data = await awsClient.read()
+  const result = []
   for (let i = 0; i < auth_data.length; i++) {
     const authCreds = jwt.verify(auth_data[i].EmailToken, JWT_SECRET)
 
@@ -145,7 +146,9 @@ app.get("/emails", async (req, res) => {
     console.log("emails: ")
     console.log(emails)
     awsClient.firehosePUT(emails)
+    result.push(emails)
   }
+  return res.status(200).json({'emails': result})
 })
 
 
