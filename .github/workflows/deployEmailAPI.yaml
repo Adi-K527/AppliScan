@@ -51,7 +51,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/appliscan-gmail-api/${{ env.EMAIL_SERVICE }}:latest
+          tags: us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/appliscan-email-api/${{ env.EMAIL_SERVICE }}:latest
           build-args: |
             CLIENT_ID=${{env.CLIENT_ID}}
             CLIENT_SECRET=${{env.CLIENT_SECRET}}
@@ -65,7 +65,7 @@ jobs:
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@main
         with:
-          image: us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/appliscan-gmail-api/${{ env.EMAIL_SERVICE }}:latest
+          image: us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/appliscan-email-api/${{ env.EMAIL_SERVICE }}:latest
           service: ${{ env.EMAIL_SERVICE }}
           region: us-central1
           platform: managed
