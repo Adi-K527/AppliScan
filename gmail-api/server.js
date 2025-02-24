@@ -5,17 +5,14 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import fetch from 'node-fetch';
 import env from 'dotenv';
-import AWS from 'aws-sdk'
 import cron from 'node-cron'
+import AWSResourceHandler from './AWSResourceHandler.js';
 
 const app = express();
 env.config()
+const PORT = process.env.PORT || 3000
 
-AWS.config.update({
-    region: 'us-east-1'
-})
-
-const dynamodbClient = new AWS.DynamoDB.DocumentClient()
+const awsClient = new AWSResourceHandler()
 
 // 1. localhost:3000/
 // 2. Google auth redirect
@@ -26,7 +23,6 @@ const dynamodbClient = new AWS.DynamoDB.DocumentClient()
 // 7. Convert to cookie with jwt
 // 8. Access gmail api passing in jwt encrypted user info
 
-
 // CLIENT_ID and CLIENT_SECRET defined in gcp project
 const CLIENT_ID     = process.env.CLIENT_ID
 const CLIENT_SECRET = process.env.CLIENT_SECRET
@@ -35,8 +31,6 @@ const SCOPES        = process.env.SCOPES.split(" ") // services we want access t
 
 // callback uri that oauth server sends responses to
 const REDIRECT_URI = process.env.REDIRECT_URI
-
-let REFRESH_TOKEN = ""
 
 app.use(cors({credentials: true}))
 app.use(cookieParser())
@@ -59,11 +53,11 @@ app.get('/', (req, res) => {
 
 app.get("/auth/google", async (req, res) => {
     const values = {
-        code: req.query.code,
-        client_id: CLIENT_ID,
+        code:          req.query.code,
+        client_id:     CLIENT_ID,
         client_secret: CLIENT_SECRET,
-        redirect_uri: REDIRECT_URI,
-        grant_type: "authorization_code",
+        redirect_uri:  REDIRECT_URI,
+        grant_type:    "authorization_code",
     }
 
     // Fetch oauth token that we use to make the api calls
@@ -75,8 +69,6 @@ app.get("/auth/google", async (req, res) => {
       body: new URLSearchParams(values),
     })
     const { id_token, access_token, refresh_token } = await authRes.json()
-    REFRESH_TOKEN = refresh_token
-    console.log(REFRESH_TOKEN)
 
     // Get google user info by making call to userinfo google api using the access token we just got
     const googleUserRes = await fetch(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${access_token}`, {
@@ -89,30 +81,9 @@ app.get("/auth/google", async (req, res) => {
 
     // Encode user info with jwt
     const jwt_token = jwt.sign({access_token, id_token, refresh_token, id: googleUser.id}, JWT_SECRET)
-    res.cookie("auth_token", jwt_token, {
-        maxAge:   new Date(Date.now() + 100 * 365 * 24 * 60 * 60 * 1000),
-        httpOnly: true,
-        secure:   false
-    })
-
-    const params = {
-        TableName: "Appliscan_Email_Table",
-        Item: {
-            UserId:     "12345",
-            EmailToken: jwt_token,
-        }
-    }
-    
-    dynamodbClient.put(params, (err, data) => {
-        if (err) {
-          console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
-        } else {
-          console.log("PutItem succeeded:", JSON.stringify(data, null, 2));
-        }
-    });
-
-    res.redirect("http://localhost:3000/emails")
+    await awsClient.insert(googleUser.id, jwt_token)
 })
+
 
 const getEmailBody = (emailData) => {
     if (emailData.payload) {
@@ -133,40 +104,44 @@ const getEmailBody = (emailData) => {
 
 app.get("/emails", async (req, res) => {
   // validate oauth token is present in jwt cookie
-  const authCreds = jwt.verify(req.cookies['auth_token'], JWT_SECRET)
+  const auth_data = await awsClient.read()
+  for (let i = 0; i < auth_data.length; i++) {
+    const authCreds = jwt.verify(auth_data[i].EmailToken, JWT_SECRET)
 
-  const thirtyMinutesAgo = Math.floor((Date.now() - 30 * 60 * 1000) / 1000);
-
-  // call gmail api with the auth creds to fetch top 10 emails
-  const emailRes = await fetch('https://gmail.googleapis.com/gmail/v1/users/' + authCreds.id + '/messages?q=after:' + thirtyMinutesAgo, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${authCreds.access_token}`,
-      Accept: 'application/json'
-    },
-  })
-  const data = await emailRes.json()
-
-  if (!data.messages) {
-    return res.status(200).json({message: {}})
-  }
-
-  // Use the id's of the emails from the previous call to get a portion of the body of the emails
-  const emails = [];
-  for (let i = 0; i < data.messages.length; i++) {
-    const res = await fetch(`https://gmail.googleapis.com/gmail/v1/users/${authCreds.id}/messages/${data.messages[i].id}?format=full`, {
-      method: "GET",
-      headers: {
+    // Get emails from 30 mins ago
+    const thirtyMinutesAgo = Math.floor((Date.now() - 30 * 60 * 1000) / 1000);
+    const emailRes = await fetch('https://gmail.googleapis.com/gmail/v1/users/' + authCreds.id + '/messages?q=after:' + thirtyMinutesAgo, {
+        method: "GET",
+        headers: {
         Authorization: `Bearer ${authCreds.access_token}`,
-        Accept: "application/json",
-      },
-    });
-  
-    const emailData = await res.json();  
-    const body = getEmailBody(emailData);
-    emails.push(body);
+        Accept: 'application/json'
+        },
+    })
+    const data = await emailRes.json()
+
+    if (!data.messages) {
+        continue
+    }
+
+    // Use the id's of the emails from the previous call to get a portion of the body of the emails
+    const emails = [];
+    for (let i = 0; i < data.messages.length; i++) {
+        const res = await fetch(`https://gmail.googleapis.com/gmail/v1/users/${authCreds.id}/messages/${data.messages[i].id}?format=full`, {
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${authCreds.access_token}`,
+            Accept: "application/json",
+        },
+        });
+    
+        const emailData = await res.json();  
+        const body = getEmailBody(emailData);
+        emails.push({'id': authCreds.id, 'body': body});
+    }
+    
+    console.log(emails)
+    awsClient.firehosePUT(emails)
   }
-  res.status(200).json({message: emails})
 })
 
 
@@ -186,23 +161,32 @@ const refreshAccessToken = async (refreshToken) => {
         });
 
         const { access_token } = await authRes.json();
-        if (access_token) {
-            console.log('Access token refreshed:', access_token);
-            // Save the new access token to your database or session
-        } else {
-            console.error('Error refreshing access token');
-        }
+        return access_token
     } catch (error) {
         console.error('Error refreshing access token:', error);
+        return error
     }
-};
-
-// Set up the cron job to run every 55 minutes to refresh the token before it expires
-cron.schedule('*/1 * * * *', () => {
-    console.log('Running token refresh job...');
-    refreshAccessToken(REFRESH_TOKEN);
-});
+}
 
 
+cron.schedule('*/1 * * * *', async () => {
+    const data = await awsClient.read()
+    
+    for (let i = 0; i < data.length; i++) {
+        const authCreds    = jwt.verify(data[i].EmailToken, JWT_SECRET)
+        let newAccessToken = await refreshAccessToken(authCreds.refresh_token)
 
-app.listen(3000, () => {console.log(`Server is running on http://localhost:3000`)});
+        const tokenContent = {
+            access_token: newAccessToken,
+            refresh_token: authCreds.refresh_token,
+            id_token: authCreds.id_token,
+            id: authCreds.id
+        }
+
+        const jwt_token = jwt.sign(tokenContent, JWT_SECRET)
+        await awsClient.insert(data[i].UserId, jwt_token)
+    }
+})
+
+
+app.listen(PORT, () => {console.log(`Server is running on http://localhost:${PORT}`)})
