@@ -82,6 +82,7 @@ app.get("/auth/google", async (req, res) => {
     // Encode user info with jwt
     const jwt_token = jwt.sign({access_token, id_token, refresh_token, id: googleUser.id}, JWT_SECRET)
     await awsClient.insert(googleUser.id, jwt_token)
+    console.log(googleUser.id, jwt_token)
 })
 
 
@@ -119,6 +120,8 @@ app.get("/emails", async (req, res) => {
     })
     const data = await emailRes.json()
 
+    console.log(data)
+
     if (!data.messages) {
         continue
     }
@@ -127,18 +130,19 @@ app.get("/emails", async (req, res) => {
     const emails = [];
     for (let i = 0; i < data.messages.length; i++) {
         const res = await fetch(`https://gmail.googleapis.com/gmail/v1/users/${authCreds.id}/messages/${data.messages[i].id}?format=full`, {
-        method: "GET",
-        headers: {
-            Authorization: `Bearer ${authCreds.access_token}`,
-            Accept: "application/json",
-        },
-        });
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${authCreds.access_token}`,
+                Accept: "application/json",
+            },
+        })
     
         const emailData = await res.json();  
         const body = getEmailBody(emailData);
         emails.push({'id': authCreds.id, 'body': body});
     }
     
+    console.log("emails: ")
     console.log(emails)
     awsClient.firehosePUT(emails)
   }

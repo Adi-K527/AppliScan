@@ -1,9 +1,10 @@
-name: Deploy Backend
+name: Deploy Email API
 
 on:
     push:
       branches:
         - main
+        - gmail-api
 
 env:
   GOOGLE_CREDENTIALS:  ${{ secrets.GOOGLE_CREDENTIALS }}
@@ -20,6 +21,7 @@ env:
   JWT_SECRET:          ${{ secrets.JWT_SECRET }}
   SCOPES:              ${{ secrets.SCOPES }}
   REDIRECT_URI:        ${{ secrets.REDIRECT_URI }}
+  EMAIL_SERVICE:       ${{ secrets.EMAIL_SERVICE }}
 
 jobs:
   deploy-backend:
@@ -49,7 +51,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: appliscan-backend/${{ env.PROJECT_ID }}/${{ env.BACKEND_SERVICE }}:latest
+          tags: appliscan-backend/${{ env.PROJECT_ID }}/${{ env.EMAIL_SERVICE }}:latest
           build-args: |
             CLIENT_ID=${{env.CLIENT_ID}}
             CLIENT_SECRET=${{env.CLIENT_SECRET}}
@@ -58,13 +60,13 @@ jobs:
             REDIRECT_URI=${{env.REDIRECT_URI}}
             AWS_ACCESS_KEY_ID=${{env.ACCESS_KEY}}
             AWS_SECRET_ACCESS_KEY=${{env.SECRET_ACCESS_KEY}}
-            COMMAND=start
+            COMMAND=gmail-api
 
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@main
         with:
-          image: appliscan-backend/${{ env.PROJECT_ID }}/${{ env.BACKEND_SERVICE }}:latest
-          service: ${{ env.BACKEND_SERVICE }}
+          image: appliscan-backend/${{ env.PROJECT_ID }}/${{ env.EMAIL_SERVICE }}:latest
+          service: ${{ env.EMAIL_SERVICE }}
           region: us-central1
           platform: managed
           allow-unauthenticated: true

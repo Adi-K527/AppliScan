@@ -87,13 +87,23 @@ module "email_dynamodb_table" {
   table_name = "Appliscan_Email_Table"
 }
 
-module "gcp_registry" {
+module "gcp_backend_registry" {
   source        = "./modules/artifact-registry"
-  registry_name = "appliscan-gcp-registry"
+  registry_name = "appliscan-backend"
+}
+
+module "gcp_email_registry" {
+  source        = "./modules/artifact-registry"
+  registry_name = "appliscan-email-api"
 }
 
 module "cloud_run_backend" {
   source   = "./modules/cloud-run"
   gcr_name = "appliscan-cloudrun-backend-8264"
+}
+
+module "cloud_run_gmail" {
+  source   = "./modules/cloud-run"
+  gcr_name = "appliscan-cloudrun-gmail-api-1964"
 }
 
