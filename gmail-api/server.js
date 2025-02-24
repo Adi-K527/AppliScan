@@ -30,7 +30,8 @@ const JWT_SECRET    = process.env.JWT_SECRET
 const SCOPES        = process.env.SCOPES.split(" ") // services we want access to
 
 // callback uri that oauth server sends responses to
-const REDIRECT_URI = process.env.REDIRECT_URI
+const REDIRECT_URI = process.env.REDIRECT_URI || 'http://localhost:3000/auth/google' 
+const EMAIL_SERVER = process.env.EMAIL_SERVER || 'http://localhost:3000'
 
 app.use(cors({credentials: true}))
 app.use(cookieParser())
@@ -82,7 +83,7 @@ app.get("/auth/google", async (req, res) => {
     // Encode user info with jwt
     const jwt_token = jwt.sign({access_token, id_token, refresh_token, id: googleUser.id}, JWT_SECRET)
     await awsClient.insert(googleUser.id, jwt_token)
-    console.log(googleUser.id, jwt_token)
+    res.redirect(`${EMAIL_SERVER}/emails`)
 })
 
 
@@ -121,8 +122,6 @@ app.get("/emails", async (req, res) => {
     })
     const data = await emailRes.json()
 
-    console.log(data)
-
     if (!data.messages) {
         continue
     }
@@ -143,8 +142,6 @@ app.get("/emails", async (req, res) => {
         emails.push({'id': authCreds.id, 'body': body});
     }
     
-    console.log("emails: ")
-    console.log(emails)
     awsClient.firehosePUT(emails)
     result.push(emails)
   }
@@ -176,7 +173,7 @@ const refreshAccessToken = async (refreshToken) => {
 }
 
 
-cron.schedule('*/1 * * * *', async () => {
+cron.schedule('*/10 * * * *', async () => {
     const data = await awsClient.read()
     
     for (let i = 0; i < data.length; i++) {

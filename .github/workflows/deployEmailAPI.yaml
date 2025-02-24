@@ -22,6 +22,7 @@ env:
   SCOPES:              ${{ secrets.SCOPES }}
   REDIRECT_URI:        ${{ secrets.REDIRECT_URI }}
   EMAIL_SERVICE:       ${{ secrets.EMAIL_SERVICE }}
+  EMAIL_SERVER:        ${{ secrets.EMAIL_SERVER }}
 
 jobs:
   deploy-backend:
@@ -61,6 +62,7 @@ jobs:
             AWS_ACCESS_KEY_ID=${{env.ACCESS_KEY}}
             AWS_SECRET_ACCESS_KEY=${{env.SECRET_ACCESS_KEY}}
             COMMAND=gmail-api
+            EMAIL_SERVER=${{ env.EMAIL_SERVER }}
 
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@main
@@ -70,4 +72,3 @@ jobs:
           region: us-central1
           platform: managed
           allow-unauthenticated: true
-          
