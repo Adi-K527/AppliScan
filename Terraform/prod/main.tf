@@ -4,7 +4,7 @@ terraform {
   required_providers {
     aws = {
         source  = "hashicorp/aws"
-        version = "~>4.0"
+        version = "~>5.0"
     }
   }
   backend "s3" {
@@ -79,16 +79,31 @@ module "kinesis_data_firehose" {
   source             = "./modules/kinesis-firehose"
   firehose_name      = "appliscan-email-preprocessor"
   s3_bucket_name     = "appliscan-transformed-emails"
-  lambda_source_file = "./code-files/firehose-transformer.py"
+  lambda_source_file = "./code-files/firehose/lambda_function.py"
 }
 
-module "gcp_registry" {
+module "email_dynamodb_table" {
+  source     = "./modules/dynamodb"
+  table_name = "Appliscan_Email_Table"
+}
+
+module "gcp_backend_registry" {
   source        = "./modules/artifact-registry"
-  registry_name = "appliscan-gcp-registry"
+  registry_name = "appliscan-backend"
+}
+
+module "gcp_email_registry" {
+  source        = "./modules/artifact-registry"
+  registry_name = "appliscan-email-api"
 }
 
 module "cloud_run_backend" {
   source   = "./modules/cloud-run"
   gcr_name = "appliscan-cloudrun-backend-8264"
+}
+
+module "cloud_run_gmail" {
+  source   = "./modules/cloud-run"
+  gcr_name = "appliscan-cloudrun-gmail-api-1964"
 }
 

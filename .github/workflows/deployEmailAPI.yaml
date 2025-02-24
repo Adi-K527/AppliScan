@@ -1,9 +1,10 @@
-name: Deploy Backend
+name: Deploy Email API
 
 on:
     push:
       branches:
         - main
+        - gmail-api
 
 env:
   GOOGLE_CREDENTIALS:  ${{ secrets.GOOGLE_CREDENTIALS }}
@@ -20,6 +21,8 @@ env:
   JWT_SECRET:          ${{ secrets.JWT_SECRET }}
   SCOPES:              ${{ secrets.SCOPES }}
   REDIRECT_URI:        ${{ secrets.REDIRECT_URI }}
+  EMAIL_SERVICE:       ${{ secrets.EMAIL_SERVICE }}
+  EMAIL_SERVER:        ${{ secrets.EMAIL_SERVER }}
 
 jobs:
   deploy-backend:
@@ -42,14 +45,14 @@ jobs:
           export_default_credentials: true
 
       - name: Configure docker for GCP
-        run: gcloud auth configure-docker
+        run: gcloud auth configure-docker us-central1-docker.pkg.dev
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
         with:
           context: .
           push: true
-          tags: appliscan-backend/${{ env.PROJECT_ID }}/${{ env.BACKEND_SERVICE }}:latest
+          tags: us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/appliscan-email-api/${{ env.EMAIL_SERVICE }}:latest
           build-args: |
             CLIENT_ID=${{env.CLIENT_ID}}
             CLIENT_SECRET=${{env.CLIENT_SECRET}}
@@ -58,13 +61,14 @@ jobs:
             REDIRECT_URI=${{env.REDIRECT_URI}}
             AWS_ACCESS_KEY_ID=${{env.ACCESS_KEY}}
             AWS_SECRET_ACCESS_KEY=${{env.SECRET_ACCESS_KEY}}
-            COMMAND=start
+            COMMAND=gmail-api
+            EMAIL_SERVER=${{ env.EMAIL_SERVER }}
 
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@main
         with:
-          image: appliscan-backend/${{ env.PROJECT_ID }}/${{ env.BACKEND_SERVICE }}:latest
-          service: ${{ env.BACKEND_SERVICE }}
+          image: us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/appliscan-email-api/${{ env.EMAIL_SERVICE }}:latest
+          service: ${{ env.EMAIL_SERVICE }}
           region: us-central1
           platform: managed
           allow-unauthenticated: true
