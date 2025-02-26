@@ -173,7 +173,7 @@ const refreshAccessToken = async (refreshToken) => {
 }
 
 
-cron.schedule('*/10 * * * *', async () => {
+app.get("/refresh", async (req, res) => {
     const data = await awsClient.read()
     
     for (let i = 0; i < data.length; i++) {
@@ -190,6 +190,7 @@ cron.schedule('*/10 * * * *', async () => {
         const jwt_token = jwt.sign(tokenContent, JWT_SECRET)
         await awsClient.insert(data[i].UserId, jwt_token)
     }
+    console.log("Tokens refreshed")
 })
 
 

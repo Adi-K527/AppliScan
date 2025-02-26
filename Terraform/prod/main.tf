@@ -23,7 +23,7 @@ provider "aws" {
 
 provider "google" {
   project     = "appliscan-413019"
-  region      = "us-central1"
+  region      = "us-south1"
 }
 
 module "cloudfront_distribution" {
@@ -107,3 +107,22 @@ module "cloud_run_gmail" {
   gcr_name = "appliscan-cloudrun-gmail-api-1964"
 }
 
+resource "google_cloud_scheduler_job" "token_refresher" {
+  name             = "token-refresh-job"
+  description      = "Job to refresh email tokens"
+  schedule         = "*/10 * * * *"
+  time_zone        = "America/New_York"
+  attempt_deadline = "320s"
+
+  retry_config {
+    retry_count = 1
+  }
+
+  http_target {
+    http_method = "GET"
+    uri         = "${module.cloud_run_gmail.gcr_url}/refresh"
+    headers = {
+      "Content-Type" = "application/json"
+    }
+  }
+}

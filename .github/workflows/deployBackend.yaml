@@ -42,14 +42,14 @@ jobs:
           export_default_credentials: true
 
       - name: Configure docker for GCP
-        run: gcloud auth configure-docker us-central1-docker.pkg.dev
+        run: gcloud auth configure-docker us-south1-docker.pkg.dev
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
         with:
           context: .
           push: true
-          tags: us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/appliscan-backend/${{ env.BACKEND_SERVICE }}:latest
+          tags: us-south1-docker.pkg.dev/${{ env.PROJECT_ID }}/appliscan-backend/${{ env.BACKEND_SERVICE }}:latest
           build-args: |
             CLIENT_ID=${{env.CLIENT_ID}}
             CLIENT_SECRET=${{env.CLIENT_SECRET}}
@@ -64,8 +64,8 @@ jobs:
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@main
         with:
-          image: us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/appliscan-backend/${{ env.BACKEND_SERVICE }}:latest
+          image: us-south1-docker.pkg.dev/${{ env.PROJECT_ID }}/appliscan-backend/${{ env.BACKEND_SERVICE }}:latest
           service: ${{ env.BACKEND_SERVICE }}
-          region: us-central1
+          region: us-south1
           platform: managed
           allow-unauthenticated: true
