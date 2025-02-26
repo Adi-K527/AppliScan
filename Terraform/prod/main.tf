@@ -23,7 +23,7 @@ provider "aws" {
 
 provider "google" {
   project     = "appliscan-413019"
-  region      = "us-south1"
+  region      = "us-central1"
 }
 
 module "cloudfront_distribution" {
