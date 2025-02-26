@@ -80,6 +80,8 @@ app.get("/auth/google", async (req, res) => {
     })
     const googleUser = await googleUserRes.json()
 
+    // console.log({access_token, id_token, refresh_token, id: googleUser.id})
+
     // Encode user info with jwt
     const jwt_token = jwt.sign({access_token, id_token, refresh_token, id: googleUser.id}, JWT_SECRET)
     await awsClient.insert(googleUser.id, jwt_token)
