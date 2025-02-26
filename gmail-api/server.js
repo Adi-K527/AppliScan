@@ -174,23 +174,30 @@ const refreshAccessToken = async (refreshToken) => {
 
 
 app.get("/refresh", async (req, res) => {
-    const data = await awsClient.read()
+    try {
+        const data = await awsClient.read()
     
-    for (let i = 0; i < data.length; i++) {
-        const authCreds    = jwt.verify(data[i].EmailToken, JWT_SECRET)
-        let newAccessToken = await refreshAccessToken(authCreds.refresh_token)
-
-        const tokenContent = {
-            access_token: newAccessToken,
-            refresh_token: authCreds.refresh_token,
-            id_token: authCreds.id_token,
-            id: authCreds.id
+        for (let i = 0; i < data.length; i++) {
+            const authCreds    = jwt.verify(data[i].EmailToken, JWT_SECRET)
+            let newAccessToken = await refreshAccessToken(authCreds.refresh_token)
+    
+            const tokenContent = {
+                access_token: newAccessToken,
+                refresh_token: authCreds.refresh_token,
+                id_token: authCreds.id_token,
+                id: authCreds.id
+            }
+    
+            const jwt_token = jwt.sign(tokenContent, JWT_SECRET)
+            await awsClient.insert(data[i].UserId, jwt_token)
         }
-
-        const jwt_token = jwt.sign(tokenContent, JWT_SECRET)
-        await awsClient.insert(data[i].UserId, jwt_token)
+        console.log("Tokens refreshed")
+        res.status(200).json({"Message": "Tokens refreshed"})
     }
-    console.log("Tokens refreshed")
+    catch (err) {
+        console.error(err)
+        res.status(400).json({"error": err})
+    }
 })
 
 
