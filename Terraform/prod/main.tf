@@ -31,6 +31,10 @@ module "cloudfront_distribution" {
   s3_bucket_name = "appliscan-frontend"
 }
 
+resource "aws_s3_bucket" "appliscan_model_bucket" {
+  bucket = "appliscan-bucket"
+}
+
 module "ecr_repository" {
   source   = "./modules/elastic-container-registry"
   ecr_name = "appli-scan"
