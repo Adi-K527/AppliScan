@@ -48,7 +48,6 @@ module "model_functions" {
   depends_on     = [ module.ecr_repository ]
 }
 
-
 resource "aws_api_gateway_rest_api" "appliscan_api" {
   name         = "Appliscan"
   description  = "Appliscan api to interact with models."
