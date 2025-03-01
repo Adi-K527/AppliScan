@@ -1,0 +1,54 @@
+name: Deploy to JobRelated Model
+
+on:
+  push:
+    branches:
+      - asd
+
+env:
+  AWS_REGION: ${{ secrets.AWS_REGION }}      
+  ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}    
+  ACCOUNT_ID: ${{ secrets.ACCOUNT_ID }} 
+  LAMBDA_FUNCTION: ${{ secrets.LAMBDA_FUNCTION_JOBREL }}  
+
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@0e613a0980cbf65ed5b322eb7a1e075d28913a83
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@62f4f872db3836360b72999f4b87f1ff13310f3a
+
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./Models/JobRelatedModel
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+      - name: Deploy to lambda
+        id: deploy-lambda
+        env:
+          IMAGE_TAG: ${{ github.sha }} 
+          ECR_REPOSITORY: ${{ env.ECR_REPOSITORY }} 
+          ACCOUNT_ID: ${{ env.ACCOUNT_ID }} 
+          LAMBDA_FUNCTION: ${{ env.LAMBDA_FUNCTION }} 
+        run:
+          aws lambda update-function-code --function-name $LAMBDA_FUNCTION --image-uri $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG > /dev/null 2>&1

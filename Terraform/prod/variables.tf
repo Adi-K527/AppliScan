@@ -12,3 +12,12 @@ variable "ecr_name" {
   description  = "ECR name"
   type         = string
 }
+
+variable "models" {
+  type    = map(string)
+  default = {
+    JobStatusModel   = "JobStatusModel"
+    NerModel         = "NerModel"
+    JobRelatedModel  = "JobRelatedModel"
+  }
+}

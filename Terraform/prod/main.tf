@@ -40,19 +40,14 @@ module "ecr_repository" {
   ecr_name = "appli-scan"
 }
 
-module "model_function_job_status" {
+module "model_functions" {
+  for_each       = var.models
   source         = "./modules/lambda"
   repository_url = module.ecr_repository.ecr_url
-  function_name  = "JobStatusModel"
+  function_name  = each.value
   depends_on     = [ module.ecr_repository ]
 }
 
-module "model_function_ner" {
-  source         = "./modules/lambda"
-  repository_url = module.ecr_repository.ecr_url
-  function_name  = "NerModel"
-  depends_on     = [ module.ecr_repository ]
-}
 
 resource "aws_api_gateway_rest_api" "appliscan_api" {
   name         = "Appliscan"
@@ -60,20 +55,11 @@ resource "aws_api_gateway_rest_api" "appliscan_api" {
 }
 
 module "api_gateway_endpoint_job_status" {
+  for_each             = var.models
   source               = "./modules/api-gateway"
-  path                 = "JobStatusModel"
-  lambda_invoke_arn    = module.model_function_job_status.lambda_arn
-  lambda_function_name = "JobStatusModel"
-  api_id               = aws_api_gateway_rest_api.appliscan_api.id
-  api_root_resource_id = aws_api_gateway_rest_api.appliscan_api.root_resource_id
-  api_execution_arn    = aws_api_gateway_rest_api.appliscan_api.execution_arn 
-}
-
-module "api_gateway_endpoint_ner" {
-  source               = "./modules/api-gateway"
-  path                 = "NerModel"
-  lambda_invoke_arn    = module.model_function_ner.lambda_arn
-  lambda_function_name = "NerModel"
+  path                 = each.value
+  lambda_invoke_arn    = module.model_functions[each.value].lambda_arn
+  lambda_function_name = each.value
   api_id               = aws_api_gateway_rest_api.appliscan_api.id
   api_root_resource_id = aws_api_gateway_rest_api.appliscan_api.root_resource_id
   api_execution_arn    = aws_api_gateway_rest_api.appliscan_api.execution_arn 
