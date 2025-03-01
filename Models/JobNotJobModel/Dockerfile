@@ -4,13 +4,11 @@ WORKDIR ${LAMBDA_TASK_ROOT}
 
 COPY requirements.txt .
 
-RUN yum -y install libgomp
-RUN apt-get update && \
-    apt-get install -y build-essential g++ && \
-    rm -rf /var/lib/apt/lists/*
+RUN yum -y groupinstall "Development Tools" && \
+    yum -y install gcc-c++ libgomp && \
+    yum clean all
 
-
-RUN pip install -r requirements.txt 
+RUN pip install --no-cache-dir -r requirements.txt 
 
 COPY src/ .
 
