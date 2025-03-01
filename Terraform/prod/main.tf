@@ -54,7 +54,7 @@ resource "aws_api_gateway_rest_api" "appliscan_api" {
   description  = "Appliscan api to interact with models."
 }
 
-module "api_gateway_endpoint_job_status" {
+module "api_gateway_endpoints" {
   for_each             = var.models
   source               = "./modules/api-gateway"
   path                 = each.value
