@@ -32,7 +32,7 @@ module "cloudfront_distribution" {
 }
 
 resource "aws_s3_bucket" "appliscan_model_bucket" {
-  bucket = "appliscan-bucket"
+  bucket = "appliscan-bucket-325"
 }
 
 module "ecr_repository" {
