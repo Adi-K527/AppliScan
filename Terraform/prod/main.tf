@@ -35,8 +35,6 @@ module "cognito_user_pool" {
   source               = "./modules/cognito"
   cognito_name         = "Appliscan"
   cognito_redirect_url = "http://localhost:3000"
-  unique_domain        = "2e0y9rfb"
-  css_file_path        = "./code-files/cognito/cognito_login.css"
 }
 
 resource "aws_s3_bucket" "appliscan_model_bucket" {
