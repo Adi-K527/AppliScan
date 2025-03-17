@@ -21,6 +21,6 @@ resource "random_id" "suffix" {
 }
 
 resource "aws_cognito_user_pool_domain" "appliscan_domain" {
-  domain       = "appliscan-${random_id.suffix.hex}" 
+  domain       = "appliscan-9138y479" 
   user_pool_id = aws_cognito_user_pool.appliscan_user_pool.id
 }
