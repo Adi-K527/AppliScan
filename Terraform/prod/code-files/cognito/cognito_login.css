@@ -1,15 +1,12 @@
-body {
-    background-color: #f4f4f4;
-    font-family: 'Inter', sans-serif;
-  }
-  
-  .label-customizable {
+/* Customize labels */
+.label-customizable {
     font-weight: 600;
     font-size: 16px;
     color: #333;
   }
   
-  input[type="text"], input[type="password"], input[type="email"] {
+  /* Customize input fields */
+  .input-customizable {
     width: 100%;
     padding: 12px;
     margin: 8px 0;
@@ -20,7 +17,8 @@ body {
     font-size: 14px;
   }
   
-  button {
+  /* Customize buttons */
+  .button-customizable {
     background-color: #007bff;
     color: white;
     padding: 12px 20px;
@@ -31,16 +29,17 @@ body {
     font-size: 16px;
   }
   
-  button:hover {
+  .button-customizable:hover {
     background-color: #0056b3;
   }
   
-  a {
+  /* Customize links */
+  .a-customizable {
     color: #007bff;
     text-decoration: none;
   }
   
-  a:hover {
+  .a-customizable:hover {
     text-decoration: underline;
   }
   
