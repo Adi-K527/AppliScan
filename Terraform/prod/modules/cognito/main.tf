@@ -32,13 +32,12 @@ resource "aws_cognito_user_pool_ui_customization" "cognito_ui" {
   css          = ".label-customizable {font-weight: 400;}"
 }
 
-resource "aws_cognito_identity_provider" "cognito_identity_provider" {
-  user_pool_id      = aws_cognito_user_pool.appliscan_user_pool.id
-  provider_name     = "COGNITO"
-  provider_type     = "COGNITO"
-  provider_details = {
-    authorize_scopes = "email"
-    client_id        = aws_cognito_user_pool_client.appliscan_app_client.id
-    client_secret    = aws_cognito_user_pool_client.appliscan_app_client.client_secret
+resource "aws_cognito_identity_pool" "appliscan_identity_pool" {
+  identity_pool_name               = "${var.cognito_name}_identity_pool"
+  allow_unauthenticated_identities = false  
+
+  cognito_identity_providers {
+    client_id     = aws_cognito_user_pool_client.appliscan_app_client.id
+    provider_name = "cognito-idp.us-east-1.amazonaws.com/${aws_cognito_user_pool.appliscan_user_pool.id}"
   }
 }
