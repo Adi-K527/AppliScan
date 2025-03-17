@@ -5,7 +5,7 @@ resource "aws_cognito_user_pool" "appliscan_user_pool" {
     name = "name"
     developer_only_attribute = false
     mutable                  = true
-    required                 = false
+    required                 = true
     string_attribute_constraints {
       max_length = 50
       min_length = 1
@@ -17,7 +17,7 @@ resource "aws_cognito_user_pool" "appliscan_user_pool" {
     name = "email"
     developer_only_attribute = false
     mutable                  = true
-    required                 = false
+    required                 = true
     string_attribute_constraints {
       max_length = 50
       min_length = 1
