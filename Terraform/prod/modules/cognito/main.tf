@@ -15,8 +15,12 @@ resource "aws_cognito_user_pool_client" "appliscan_app_client" {
   depends_on    = [ aws_cognito_user_pool.appliscan_user_pool ]
 }
 
-resource "aws_cognito_user_pool_domain" "cognito_domain" {
-  domain = "appliscan-${var.unique_domain}"
+resource "random_id" "suffix" {
+  byte_length = 4
+}
+
+resource "aws_cognito_user_pool_domain" "appliscan_domain" {
+  domain       = "appliscan-${random_id.suffix.hex}" 
   user_pool_id = aws_cognito_user_pool.appliscan_user_pool.id
 }
 
