@@ -1,6 +1,28 @@
 resource "aws_cognito_user_pool" "appliscan_user_pool" {
   name                     = var.cognito_name
-  username_attributes      = ["email"]
+  schema {
+    attribute_data_type = "String"
+    name = "name"
+    developer_only_attribute = false
+    mutable                  = true
+    required                 = false
+    string_attribute_constraints {
+      max_length = 50
+      min_length = 1
+    }
+  }
+
+  schema {
+    attribute_data_type = "String"
+    name = "email"
+    developer_only_attribute = false
+    mutable                  = true
+    required                 = false
+    string_attribute_constraints {
+      max_length = 50
+      min_length = 1
+    }
+  }
   auto_verified_attributes = ["email"]
 }
 
