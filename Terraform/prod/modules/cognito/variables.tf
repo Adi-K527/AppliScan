@@ -4,6 +4,11 @@ variable "cognito_name" {
 }
 
 variable "cognito_redirect_url" {
-  description = "Name of origin S3 bucket"
+  description = "Cognito redirect URL"
+  type        = string
+}
+
+variable "unique_domain" {
+  description = "Unique domain to add to url"
   type        = string
 }
