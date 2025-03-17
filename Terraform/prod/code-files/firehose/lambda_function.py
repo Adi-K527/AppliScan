@@ -1,27 +1,25 @@
 import json
+import uuid
 import base64
 
 def lambda_handler(event, context):
-    
-    records_transformed = []
+    record_id = event['records'][0]['recordId']
+
+    emails = []
+    uuids  = []
 
     for record in event['records']:
-       record_id = record['recordId']
-       data_raw  = base64.b64decode(record['data']).decode('utf-8')
+       uuids.append(str(uuid.uuid4()))
+       emails.append(record['data'])
 
-       data_json = json.loads(data_raw)
-
-       print("Data ID: ", data_json['id'])
-
-       transformed_data = base64.b64encode(json.dumps(data_json).encode("utf-8")).decode("utf-8")
-
-       records_transformed.append({
-           'recordId': record_id,
-           'result': 'Ok',
-           'data': transformed_data
-       })
+    transformed_data = base64.b64encode(json.dumps({
+        'emails': emails,
+        'uuids':  uuids
+    }).encode("utf-8")).decode("utf-8")
     
-    print(records_transformed)
+    print(transformed_data)
     return {
-        'records': records_transformed
+        'recordId': record_id,
+        'result':   'Ok',
+        'records':  transformed_data
     }

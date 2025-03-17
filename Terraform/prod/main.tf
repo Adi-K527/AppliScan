@@ -31,6 +31,10 @@ module "cloudfront_distribution" {
   s3_bucket_name = "appliscan-frontend"
 }
 
+resource "aws_cognito_user_pool" "appliscan_cognito_user_pool" {
+  name = "Appliscan"
+}
+
 resource "aws_s3_bucket" "appliscan_model_bucket" {
   bucket = "appliscan-bucket-325"
 }
