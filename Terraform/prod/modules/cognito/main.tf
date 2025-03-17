@@ -15,7 +15,6 @@ resource "aws_cognito_user_pool" "appliscan_user_pool" {
   }
 
   auto_verified_attributes = ["email"]
-  username_attributes      = ["email", "username"]
 }
 
 resource "aws_cognito_user_pool_client" "appliscan_app_client" {
