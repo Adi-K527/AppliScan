@@ -5,6 +5,6 @@ resource "aws_cognito_user_pool" "appliscan_user_pool" {
 resource "aws_cognito_user_pool_client" "appliscan_app_client" {
   name          = "${var.cognito_name} Client"
   user_pool_id  = aws_cognito_user_pool.appliscan_user_pool.id
-  default_redirect_uri = var.cognito_redirect_url
+  callback_urls = [ var.cognito_redirect_url ]
   depends_on    = [ aws_cognito_user_pool.appliscan_user_pool ]
 }
