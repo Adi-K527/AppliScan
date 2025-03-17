@@ -1,5 +1,6 @@
 resource "aws_cognito_user_pool" "appliscan_user_pool" {
-  name = var.cognito_name
+  name                = var.cognito_name
+  username_attributes = ["email"]
 }
 
 resource "aws_cognito_user_pool_client" "appliscan_app_client" {
