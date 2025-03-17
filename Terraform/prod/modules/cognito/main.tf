@@ -6,6 +6,16 @@ resource "aws_cognito_user_pool" "appliscan_user_pool" {
     required            = true
     mutable             = true
   }
+
+  schema {
+    attribute_data_type = "String"
+    name                = "username"
+    required            = true
+    mutable             = true
+  }
+
+  auto_verified_attributes = ["email"]
+  username_attributes      = ["email", "username"]
 }
 
 resource "aws_cognito_user_pool_client" "appliscan_app_client" {
@@ -15,7 +25,7 @@ resource "aws_cognito_user_pool_client" "appliscan_app_client" {
 
   allowed_oauth_flows_user_pool_client = true
   allowed_oauth_flows                  = ["code", "implicit"]
-  allowed_oauth_scopes                 = ["email", "openid"]
+  allowed_oauth_scopes                 = ["openid", "email", "profile"]
   supported_identity_providers         = ["COGNITO"]
 
   depends_on    = [ aws_cognito_user_pool.appliscan_user_pool ]
