@@ -32,8 +32,9 @@ module "cloudfront_distribution" {
 }
 
 module "cognito_user_pool" {
-  source       = "./modules/cognito"
-  cognito_name = "Appliscan"
+  source               = "./modules/cognito"
+  cognito_name         = "Appliscan"
+  cognito_redirect_url = "http://localhost:3000"
 }
 
 resource "aws_s3_bucket" "appliscan_model_bucket" {
