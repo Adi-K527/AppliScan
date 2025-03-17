@@ -23,5 +23,5 @@ resource "aws_cognito_user_pool_domain" "cognito_domain" {
 resource "aws_cognito_user_pool_ui_customization" "cognito_ui" {
   user_pool_id = aws_cognito_user_pool.appliscan_user_pool.id
   client_id    = aws_cognito_user_pool_client.appliscan_app_client.id
-  css          = file("../../code-files/cognito/cognito_login.css")
+  css          = file("${var.css_file_path}")
 }
