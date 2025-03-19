@@ -22,5 +22,5 @@ def lambda_handler(event, context):
     
     return {
         'statusCode': 200,
-        'body': json.dumps({"prediction": prediction[0]}, default=np_encoder)
+        'body': json.dumps({"prediction": prediction}, default=np_encoder)
     }
