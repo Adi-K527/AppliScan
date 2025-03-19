@@ -43,22 +43,22 @@ export default {
   },
   methods: {
     handleSignIn() {
-      // Add your sign-in logic here
+      // regex and checking
       if (!this.email.includes('@')) {
         this.signInError = "Email must contain @.";
         return;
       }
       
-      // If no errors, proceed with form submission
+      
       this.signInError = "";
-      // Handle form submission logic here
+      // what to do after submission
     }
   }
 }
 </script>
 
 <style scoped>
-/* Scoped styles specific to the SignIn component */
+
 .container {
   background: #1e1e1e;
   padding: 2em;
