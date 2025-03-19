@@ -1,11 +1,4 @@
-numpy >= 1.17.3
-scipy >= 1.5.0
-joblib >= 1.1.1
-threadpoolctl >= 2.0.0
-hyperopt
-xgboost==2.0.3
-setuptools
+boto3
+numpy
+joblib
 scikit-learn
-spacy==2.3.5
-pandas
-mlxtend==0.23.1
