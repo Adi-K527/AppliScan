@@ -3,7 +3,7 @@ name: Deploy Cloud
 on:
   push:
     branches:
-      - main
+      - asd
       - gmail-api
 
 env:
