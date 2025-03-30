@@ -19,7 +19,7 @@ def lambda_handler(event, context):
     print("-------------------------------------    LOG 2   -------------------------------------")
     print(model)
 
-    prediction = model.predict([event["body"]])
+    prediction = model.predict([json.loads(event["body"])])
 
     print("-------------------------------------    LOG 3   -------------------------------------")
     print(prediction)
