@@ -4,14 +4,16 @@ import joblib
 import numpy as np
 import os
 
+s3_client = boto3.client('s3')
 
 def lambda_handler(event, context):
 
     print("-------------------------------------    LOG 1   -------------------------------------")
     print(event["body"])
     
-    bucket = boto3.resource('s3').Bucket("appliscan-bucket-325")
-    bucket.download_file('Job_related_Model.joblib', '/tmp/model.joblib')
+    s3_client.download_file(Bucket   = "appliscan-bucket-325", 
+                            Key      = "Job_related_Model.joblib", 
+                            Filename = "/tmp/model.joblib")
     model = joblib.load('/tmp/model.joblib')      
 
     print("-------------------------------------    LOG 2   -------------------------------------")
