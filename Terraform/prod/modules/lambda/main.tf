@@ -23,6 +23,19 @@ data "aws_iam_policy_document" "lambda_policy" {
 
     resources = ["arn:aws:logs:*:*:*"]
   }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:*"
+    ]
+
+    resources = [
+      "arn:aws:s3:::*",
+      "arn:aws:s3:::*/*"
+    ]
+  }
 }
 
 resource "aws_iam_role" "iam_for_lambda" {
