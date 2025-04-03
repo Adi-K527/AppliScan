@@ -78,3 +78,12 @@ resource "aws_lambda_function" "lambda_standard" {
   source_code_hash = data.archive_file.lambda_zip[0].output_base64sha256
   timeout          = "180"
 }
+
+resource "aws_lambda_permission" "allow_bucket" {
+  count         = var.bucket_arn && 1
+  statement_id  = "AllowExecutionFromS3Bucket"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.func.arn
+  principal     = "s3.amazonaws.com"
+  source_arn    = var.bucket_arn
+}

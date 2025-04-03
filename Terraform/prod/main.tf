@@ -41,6 +41,11 @@ resource "aws_s3_bucket" "appliscan_model_bucket" {
   bucket = "appliscan-bucket-325"
 }
 
+resource "aws_s3_bucket" "firehose_delivery_bucket" {
+  bucket = "appliscan-transformed-emails"
+}
+
+
 module "ecr_repository" {
   source   = "./modules/elastic-container-registry"
   ecr_name = "appli-scan"
@@ -51,6 +56,7 @@ module "model_functions" {
   source         = "./modules/lambda"
   repository_url = module.ecr_repository.ecr_url
   function_name  = each.value
+  bucket_arn     = aws_s3_bucket.firehose_delivery_bucket.arn
   depends_on     = [ module.ecr_repository ]
 }
 
@@ -73,8 +79,9 @@ module "api_gateway_endpoints" {
 module "kinesis_data_firehose" {
   source             = "./modules/kinesis-firehose"
   firehose_name      = "appliscan-email-preprocessor"
-  s3_bucket_name     = "appliscan-transformed-emails"
   lambda_source_file = "./code-files/firehose/lambda_function.py"
+  bucket_id = aws_s3_bucket.firehose_delivery_bucket.id
+  job_related_model_function_arn = module.model_functions["JobRelatedModel"].lambda_arn
 }
 
 module "email_dynamodb_table" {

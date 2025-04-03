@@ -20,3 +20,9 @@ variable "source_file" {
   type         = string
   default      = "test"
 }
+
+variable "bucket_arn" {
+  description  = "ARN for bucket trigger"
+  type         = string
+  default      = null
+}
