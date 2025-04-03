@@ -57,7 +57,7 @@ module "model_functions" {
   repository_url = module.ecr_repository.ecr_url
   function_name  = each.value
   bucket_arn     = aws_s3_bucket.firehose_delivery_bucket.arn
-  depends_on     = [ module.ecr_repository ]
+  depends_on     = [ module.ecr_repository, aws_s3_bucket.firehose_delivery_bucket ]
 }
 
 resource "aws_api_gateway_rest_api" "appliscan_api" {

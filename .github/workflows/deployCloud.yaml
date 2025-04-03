@@ -3,8 +3,7 @@ name: Deploy Cloud
 on:
   push:
     branches:
-      - asd
-      - gmail-api
+      - main
 
 env:
   GOOGLE_CREDENTIALS:  ${{ secrets.GOOGLE_CREDENTIALS }}
