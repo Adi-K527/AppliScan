@@ -41,7 +41,7 @@ resource "aws_iam_policy" "firehose_policy" {
     Statement  = [{
       Action   = ["s3:PutObject"]
       Effect   = "Allow"
-      Resource = "${aws_s3_bucket.firehose_delivery_bucket.arn}/*"
+      Resource = "${var.bucket_arn}/*"
     },
     {
       Action   = ["lambda:InvokeFunction"]
