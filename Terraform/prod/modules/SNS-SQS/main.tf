@@ -1,11 +1,11 @@
 resource "aws_sns_topic" "appliscan_sns" {
-  name        = "appliscan-emails-topic"
+  name        = "appliscan_emails_topic.fifo"
   fifo_topic  = true
 }
 
 resource "aws_sqs_queue" "model_queue" {
   for_each                    = var.models
-  name                        = "${each.key}-queue.fifo"
+  name                        = "${each.key}_queue.fifo"
   fifo_queue                  = true
   content_based_deduplication = true
 }

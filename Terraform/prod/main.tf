@@ -94,7 +94,7 @@ module "email_dynamodb_table" {
 module "sns_and_sqs" {
   source                     = "./modules/SNS-SQS"
   job_related_function_name  = "JobRelatedModel"
-  ner_model_arn              = module.model_functions["NERModel"].lambda_arn
+  ner_model_arn              = module.model_functions["NerModel"].lambda_arn
   job_status_model_arn       = module.model_functions["JobStatusModel"].lambda_arn
 }
 
