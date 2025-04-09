@@ -1,5 +1,5 @@
 resource "aws_s3_bucket_notification" "bucket_notification" {
-  bucket = var.bucket_arn
+  bucket = "appliscan-transformed-emails"
 
   lambda_function {
     lambda_function_arn = var.job_related_model_function_arn
