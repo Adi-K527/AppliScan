@@ -69,7 +69,7 @@ module "api_gateway_endpoints" {
   for_each             = var.models
   source               = "./modules/api-gateway"
   path                 = each.value
-  lambda_invoke_arn    = module.model_functions[each.value].lambda_arn
+  lambda_invoke_arn    = module.model_functions[each.value].lambda_invoke_arn
   lambda_function_name = each.value
   api_id               = aws_api_gateway_rest_api.appliscan_api.id
   api_root_resource_id = aws_api_gateway_rest_api.appliscan_api.root_resource_id
