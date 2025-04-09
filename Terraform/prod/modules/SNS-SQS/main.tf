@@ -12,7 +12,7 @@ resource "aws_sqs_queue" "model_queue" {
 
 resource "aws_sns_topic_subscription" "sns_to_sqs" {
   for_each = var.models
-  topic_arn = aws_sns_topic.user_updates.arn
+  topic_arn = aws_sns_topic.appliscan_sns.arn
   protocol  = "sqs"
   endpoint  = aws_sqs_queue.model_queue[each.key].arn
 }
