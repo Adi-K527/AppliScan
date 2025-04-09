@@ -81,6 +81,7 @@ module "kinesis_data_firehose" {
   firehose_name      = "appliscan-email-preprocessor"
   lambda_source_file = "./code-files/firehose/lambda_function.py"
   bucket_id = aws_s3_bucket.firehose_delivery_bucket.id
+  bucket_arn = aws_s3_bucket.firehose_delivery_bucket.arn
   job_related_model_function_arn = module.model_functions["JobRelatedModel"].lambda_arn
   depends_on = [ module.model_functions["JobRelatedModel"] ]
 }

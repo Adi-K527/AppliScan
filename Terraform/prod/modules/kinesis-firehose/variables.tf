@@ -3,6 +3,11 @@ variable "bucket_id" {
   type        = string
 }
 
+variable "bucket_arn" {
+  description = "ARN of S3 bucket"
+  type        = string
+}
+
 variable "firehose_name" {
   description = "Name of Kinesis Firehose resource"
   type        = string
