@@ -80,10 +80,12 @@ resource "aws_lambda_function" "lambda_standard" {
 }
 
 resource "aws_lambda_permission" "allow_bucket" {
-  count         = length(var.bucket_arn) > 0 ? 1 : 0
+  for_each = var.bucket_arn != null ? { "s3" = var.bucket_arn } : {}
+
   statement_id  = "AllowExecutionFromS3Bucket"
   action        = "lambda:InvokeFunction"
-  function_name = var.container_based ? aws_lambda_function.lambda_standard[0].arn : aws_lambda_function.lambda_container_based[0].arn
+  function_name = var.container_based ? aws_lambda_function.lambda_container_based[0].arn : aws_lambda_function.lambda_standard[0].arn
   principal     = "s3.amazonaws.com"
-  source_arn    = var.bucket_arn  
+  source_arn    = each.value
 }
+
