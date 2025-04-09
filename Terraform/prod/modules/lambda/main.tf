@@ -88,3 +88,4 @@ resource "aws_lambda_permission" "allow_bucket" {
   source_arn    = each.value
 }
 
+
