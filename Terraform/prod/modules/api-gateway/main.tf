@@ -22,13 +22,8 @@ resource "aws_api_gateway_integration" "model_integration" {
 
 resource "aws_api_gateway_deployment" "api_deployment" {
   rest_api_id = var.api_id
+  stage_name  = "prod"
   depends_on  = [ aws_api_gateway_integration.model_integration]   
-}
-
-resource "aws_api_gateway_stage" "api_stage" {
-  stage_name    = "prod"
-  rest_api_id   = var.api_id
-  deployment_id = aws_api_gateway_deployment.api_deployment.id
 }
 
 resource "aws_lambda_permission" "api_gateway_permission_ner_model" {
