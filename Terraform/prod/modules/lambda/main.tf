@@ -80,7 +80,6 @@ resource "aws_lambda_function" "lambda_standard" {
 }
 
 resource "aws_lambda_permission" "allow_bucket" {
-  for_each = var.bucket_arn != null ? { "enabled" = var.bucket_arn } : {}
   statement_id  = "AllowExecutionFromS3Bucket"
   action        = "lambda:InvokeFunction"
   function_name = var.container_based ? aws_lambda_function.lambda_container_based[0].arn : aws_lambda_function.lambda_standard[0].arn
