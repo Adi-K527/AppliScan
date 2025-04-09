@@ -82,6 +82,7 @@ module "kinesis_data_firehose" {
   lambda_source_file = "./code-files/firehose/lambda_function.py"
   bucket_id = aws_s3_bucket.firehose_delivery_bucket.id
   job_related_model_function_arn = module.model_functions["JobRelatedModel"].lambda_arn
+  depends_on = [ module.model_functions["JobRelatedModel"] ]
 }
 
 module "email_dynamodb_table" {
