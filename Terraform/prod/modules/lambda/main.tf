@@ -46,6 +46,16 @@ data "aws_iam_policy_document" "lambda_policy" {
     ]
     resources = ["arn:aws:sqs:*:*:*"]
   }
+
+  statement {
+    effect  = "Allow"
+    actions = [
+      "sns:ReceiveMessage",
+      "sns:DeleteMessage",
+      "sns:GetQueueAttributes"
+    ]
+    resources = ["arn:aws:sns:*:*:*"]
+  }
 }
 
 resource "aws_iam_role" "iam_for_lambda" {
