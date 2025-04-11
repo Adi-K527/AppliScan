@@ -11,6 +11,13 @@ def lambda_handler(event, context):
     print("-------------------------------------    LOG 1   -------------------------------------")
     print(event)
     print(json.loads(event["body"])['body'])
+
+    object_key  = event['Records'][0]['s3']['object']['key']
+    bucket_name = event['Records'][0]['s3']['bucket']['name']
+
+    s3_client.download_file(Bucket   = bucket_name, 
+                            Key      = object_key, 
+                            Filename = "/tmp/text.txt")
     
     s3_client.download_file(Bucket   = "appliscan-bucket-325", 
                             Key      = "Job_related_Model.joblib", 
@@ -20,7 +27,11 @@ def lambda_handler(event, context):
     print("-------------------------------------    LOG 2   -------------------------------------")
     print(model)
 
-    prediction = model.predict(json.loads(event["body"])['body'])
+    with open("/tmp/text.txt", "r") as file:
+        text = json.loads(file.read())
+        print(text)
+
+    prediction = model.predict(text)
 
     print("-------------------------------------    LOG 3   -------------------------------------")
     print(prediction)
