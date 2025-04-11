@@ -30,12 +30,14 @@ def lambda_handler(event, context):
         text = json.loads(file.read())
         print(text)
 
-    prediction = model.predict(text)
+    prediction = model.predict(text['emails'])
 
     print("-------------------------------------    LOG 3   -------------------------------------")
     print(prediction)
+
+    res_data = [[text['emails'][i], text['ids'][i], text['uuids'][i], prediction[i]] for i in range(len(text['emails']))]
     
     return {
         'statusCode': 200,
-        'body': json.dumps({"prediction": list(prediction)})
+        'body': json.dumps({"data": list(res_data)})
     }
