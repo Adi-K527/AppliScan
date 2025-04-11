@@ -1,6 +1,6 @@
 resource "aws_sns_topic" "appliscan_sns" {
-  name        = "appliscan_emails_topic.fifo"
-  fifo_topic  = true
+  name        = "appliscan_emails_topic"
+  fifo_topic  = false
 }
 
 resource "aws_sqs_queue" "model_queue" {
