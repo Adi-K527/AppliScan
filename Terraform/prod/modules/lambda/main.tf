@@ -77,6 +77,7 @@ resource "aws_lambda_function" "lambda_container_based" {
   function_name  = var.function_name
   package_type   = "Image"
   role           = aws_iam_role.iam_for_lambda.arn
+  timeout        = "180"
 }
 
 data "archive_file" "lambda_zip" {
