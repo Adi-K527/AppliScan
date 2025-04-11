@@ -22,10 +22,10 @@ def lambda_handler(event, context):
     s3_client.download_file(Bucket   = "appliscan-bucket-325", 
                             Key      = "Job_related_Model.joblib", 
                             Filename = "/tmp/model.joblib")
+    
     model = joblib.load('/tmp/model.joblib')      
 
     print("-------------------------------------    LOG 2   -------------------------------------")
-    print(model)
 
     with open("/tmp/text.txt", "r") as file:
         text = json.loads(file.read())
