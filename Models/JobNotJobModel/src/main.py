@@ -10,7 +10,6 @@ def lambda_handler(event, context):
 
     print("-------------------------------------    LOG 1   -------------------------------------")
     print(event)
-    print(json.loads(event["body"])['body'])
 
     object_key  = event['Records'][0]['s3']['object']['key']
     bucket_name = event['Records'][0]['s3']['bucket']['name']
