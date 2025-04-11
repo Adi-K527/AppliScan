@@ -50,9 +50,7 @@ data "aws_iam_policy_document" "lambda_policy" {
   statement {
     effect  = "Allow"
     actions = [
-      "sns:ReceiveMessage",
-      "sns:DeleteMessage",
-      "sns:GetQueueAttributes"
+      "sns:Publish"
     ]
     resources = ["arn:aws:sns:*:*:*"]
   }
