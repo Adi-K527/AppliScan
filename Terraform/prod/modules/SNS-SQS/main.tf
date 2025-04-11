@@ -5,9 +5,8 @@ resource "aws_sns_topic" "appliscan_sns" {
 
 resource "aws_sqs_queue" "model_queue" {
   for_each                    = var.models
-  name                        = "${each.key}_queue.fifo"
-  fifo_queue                  = true
-  content_based_deduplication = true
+  name                        = "${each.key}_queue"
+  fifo_queue                  = false
 }
 
 resource "aws_sns_topic_subscription" "sns_to_sqs" {
