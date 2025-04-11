@@ -45,6 +45,10 @@ resource "aws_s3_bucket" "firehose_delivery_bucket" {
   bucket = "appliscan-transformed-emails"
 }
 
+resource "aws_s3_bucket" "model_output_bucket" {
+  bucket = "appliscan-model-output-bucket"
+}
+
 
 module "ecr_repository" {
   source   = "./modules/elastic-container-registry"
@@ -96,6 +100,13 @@ module "sns_and_sqs" {
   job_related_function_name  = "JobRelatedModel"
   ner_model_arn              = module.model_functions["NerModel"].lambda_arn
   job_status_model_arn       = module.model_functions["JobStatusModel"].lambda_arn
+}
+
+module "glue_job" {
+  source           = "./modules/glue"
+  s3_bucket_name   = aws_s3_bucket.model_output_bucket.bucket
+  code_path        = "./code-files/glue/etl.py"
+  depends_on       = [ aws_s3_bucket.model_output_bucket ]
 }
 
 module "gcp_backend_registry" {
