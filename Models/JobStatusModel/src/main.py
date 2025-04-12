@@ -14,7 +14,8 @@ def lambda_handler(event, context):
 
     print("-------------------------------------    LOG 1   -------------------------------------")
     print(event['Records'][0])
-    print(event['Records'][0]['Message'])
+    print(event['Records'][0]['body'])
+    print(event['Records'][0]['body']['Message'])
 
     s3_client.download_file(Bucket   = "appliscan-bucket-325", 
                             Key      = "Job_Status_Preprocessing_Pipeline.joblib", 
