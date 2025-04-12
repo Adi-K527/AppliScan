@@ -3,3 +3,4 @@ boto3
 numpy
 joblib
 scikit-learn
+mlxtend==0.23.1
