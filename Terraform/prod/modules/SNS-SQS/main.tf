@@ -9,6 +9,30 @@ resource "aws_sqs_queue" "model_queue" {
   fifo_queue                  = false
 }
 
+resource "aws_sqs_queue_policy" "model_queue_policy" {
+  for_each = var.models
+  queue_url = aws_sqs_queue.model_queue[each.key].id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Service = "sns.amazonaws.com"
+        }
+        Action = "SQS:SendMessage"
+        Resource = aws_sqs_queue.model_queue[each.key].arn
+        Condition = {
+          StringEquals = {
+            "aws:SourceArn" = aws_sns_topic.appliscan_sns.arn
+          }
+        }
+      }
+    ]
+  })
+}
+
 resource "aws_sns_topic_subscription" "sns_to_sqs" {
   for_each = var.models
   topic_arn = aws_sns_topic.appliscan_sns.arn
