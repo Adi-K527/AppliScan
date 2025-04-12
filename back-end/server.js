@@ -8,9 +8,8 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 
 
-
 const client = new pg.Client({
-  connectionString: 'postgresql://postgres.tybdfyuymvpnxnmobbht:Appliscan123@aws-0-us-east-1.pooler.supabase.com:5432/postgres'
+  connectionString: process.env.DB_URI
 })
 client.connect()
 .then(() => console.log('Connected to the database'))
@@ -65,7 +64,7 @@ app.post('/data', async (req, res) => {
   try {
     const records = req.body;
 
-    statuses = {0: "Just Applied", 1: "Action Needed", 2: "Rejected"}
+    const statuses = {0: "Just Applied", 1: "Action Needed", 2: "Rejected"}
 
     if (!Array.isArray(records)) {
       return res.status(400).json({ error: 'Expected an array of records.' });
@@ -80,7 +79,7 @@ app.post('/data', async (req, res) => {
         VALUES ($1, $2, $3)
         RETURNING *`;
 
-      const values = [record[0], record[1], record[3]]; 
+      const values = [statuses[record[0]], record[1], record[3]]; 
       await client.query(insertQuery, values);
     }
 

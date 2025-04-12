@@ -20,6 +20,7 @@ env:
   JWT_SECRET:          ${{ secrets.JWT_SECRET }}
   SCOPES:              ${{ secrets.SCOPES }}
   REDIRECT_URI:        ${{ secrets.REDIRECT_URI }}
+  DB_URI:              ${{ secrets.DB_URI }}
 
 jobs:
   deploy-backend:
@@ -60,6 +61,7 @@ jobs:
             AWS_SECRET_ACCESS_KEY=${{env.SECRET_ACCESS_KEY}}
             COMMAND=start
             EMAIL_SERVER=${{ env.EMAIL_SERVER }}
+            DB_URI=${{ env.DB_URI }}
 
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@main

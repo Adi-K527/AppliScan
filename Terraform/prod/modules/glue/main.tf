@@ -54,13 +54,19 @@ resource "aws_s3_object" "glue_script" {
 }
 
 
-resource "aws_glue_job" "etl_job" {
-  name         = "etl_job"
-  glue_version = "5.0"
-  role_arn     = aws_iam_role.glue_service_role.arn
+resource "aws_glue_job" "python_shell_job" {
+  name              = "python-shell-job"
+  role_arn          = aws_iam_role.glue_service_role.arn
+  glue_version      = "3.0"
+  number_of_workers = 1
+  worker_type       = "Standard"
 
   command {
     script_location = "s3://${var.s3_bucket_name}/scripts/etl.py"
     python_version  = "3"
+    name            = "pythonshell"
   }
+
+  max_retries = 0
+  timeout     = 10
 }
