@@ -13,9 +13,9 @@ s3_client = boto3.client('s3')
 def lambda_handler(event, context):
 
     print("-------------------------------------    LOG 1   -------------------------------------")
-    print(event['Records'][0])
-    print(event['Records'][0]['body'])
-    print(event['Records'][0]['body']['Message'])
+    event = json.loads(event['Records'][0]['body'])
+    print(event)
+    print(event['Message'])
 
     s3_client.download_file(Bucket   = "appliscan-bucket-325", 
                             Key      = "Job_Status_Preprocessing_Pipeline.joblib", 
