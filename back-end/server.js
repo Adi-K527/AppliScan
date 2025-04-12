@@ -65,6 +65,8 @@ app.post('/data', async (req, res) => {
   try {
     const records = req.body;
 
+    statuses = {0: "Just Applied", 1: "Action Needed", 2: "Rejected"}
+
     if (!Array.isArray(records)) {
       return res.status(400).json({ error: 'Expected an array of records.' });
     }
@@ -72,6 +74,14 @@ app.post('/data', async (req, res) => {
     // Process each record
     for (const record of records) {
       console.log('Processing record:', record);
+
+      const insertQuery = `
+        INSERT INTO application (status, gid, company)
+        VALUES ($1, $2, $3)
+        RETURNING *`;
+
+      const values = [record[0], record[1], record[3]]; 
+      await client.query(insertQuery, values);
     }
 
     return res.status(200).json({ message: 'Data processed successfully.' });

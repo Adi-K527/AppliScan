@@ -47,5 +47,5 @@ df_merged.drop(columns=['uuids'], inplace=True)
 
 response = requests.post(url='https://appliscan-cloudrun-backend-8264-1081683483960.us-central1.run.app/data',
                          headers={'Content-Type': 'application/json'},
-                         json=df_merged.to_dict(orient='records'))
+                         json=df_merged.values.tolist())
 print(response.status_code)
