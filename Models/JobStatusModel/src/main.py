@@ -14,8 +14,10 @@ def lambda_handler(event, context):
 
     print("-------------------------------------    LOG 1   -------------------------------------")
     event = json.loads(event['Records'][0]['body'])
+    event = event['Message']['responsePayload']['body']
     print(event)
-    print(event['Message'])
+
+    emails = [i[0] for i in event['data']]
 
     s3_client.download_file(Bucket   = "appliscan-bucket-325", 
                             Key      = "Job_Status_Preprocessing_Pipeline.joblib", 
@@ -31,8 +33,11 @@ def lambda_handler(event, context):
     print("-------------------------------------    LOG 2   -------------------------------------")
     print(model, preprocessing_pipeline)
     
-    data_preprocessed = preprocessing_pipeline.transform([event["body"]])
+    data_preprocessed = preprocessing_pipeline.transform(emails)
     prediction = model.predict(data_preprocessed)
+
+    print("-------------------------------------    LOG 3   -------------------------------------")
+    print(prediction)
     
     return {
         'statusCode': 200,
