@@ -1,35 +1,35 @@
 import json
 import boto3
 import joblib
-import spacy
-import re
 import numpy as np
-import os
 
 
 def np_encoder(object):
     if isinstance(object, np.generic):
         return object.item()
 
+s3_client = boto3.client('s3')
 
 def lambda_handler(event, context):
+
+    print("-------------------------------------    LOG 1   -------------------------------------")
+    print(event)
+
+    s3_client.download_file(Bucket   = "appliscan-bucket-325", 
+                            Key      = "Job_Status_Preprocessing_Pipeline.joblib", 
+                            Filename = "/tmp/preprocessing_pipeline.joblib")
     
-    bucket = boto3.resource('s3', 
-                            aws_access_key_id=os.getenv('MY_AWS_ACCESS_THING'), 
-                            aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS')).Bucket(os.getenv('AWS_BUCKET'))
-    
-    bucket.download_file('Models/JobStatusModel/Job_Status_Preprocessing_Pipeline.joblib', 
-                                      '/tmp/preprocessing_pipeline.joblib')
-    
-    bucket.download_file('Models/JobStatusModel/Job_Status_Model.joblib', 
-                                      '/tmp/model.joblib')
+    s3_client.download_file(Bucket   = "appliscan-bucket-325", 
+                            Key      = "Job_Status_Model.joblib", 
+                            Filename = "/tmp/model.joblib")
 
     model = joblib.load('/tmp/model.joblib')
     preprocessing_pipeline = joblib.load('/tmp/preprocessing_pipeline.joblib') 
-    
+
+    print("-------------------------------------    LOG 2   -------------------------------------")
+    print(model, preprocessing_pipeline)
     
     data_preprocessed = preprocessing_pipeline.transform([event["body"]])
-    
     prediction = model.predict(data_preprocessed)
     
     return {

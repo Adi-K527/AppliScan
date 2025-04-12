@@ -85,6 +85,11 @@ app.get("/auth/google", async (req, res) => {
     // Encode user info with jwt
     const jwt_token = jwt.sign({access_token, id_token, refresh_token, id: googleUser.id}, JWT_SECRET)
     await awsClient.insert(googleUser.id, jwt_token)
+    res.cookie("EmailToken", jwt_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "None",
+    })
     res.redirect(`${EMAIL_SERVER}/emails`)
 })
 
@@ -147,7 +152,7 @@ app.get("/emails", async (req, res) => {
     awsClient.firehosePUT(emails)
     result.push(emails)
   }
-  return res.status(200).json({'emails': result})
+  return res.status(200).json({'message': 'done'})
 })
 
 

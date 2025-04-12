@@ -109,6 +109,10 @@ module "glue_job" {
   depends_on       = [ aws_s3_bucket.model_output_bucket ]
 }
 
+module "event_bridge" {
+  source = "./modules/event-bridge"
+}
+
 module "gcp_backend_registry" {
   source        = "./modules/artifact-registry"
   registry_name = "appliscan-backend"

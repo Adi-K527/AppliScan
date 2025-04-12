@@ -35,7 +35,7 @@ def lambda_handler(event, context):
     print("-------------------------------------    LOG 3   -------------------------------------")
     print(prediction)
 
-    res_data = [[text['emails'][i], text['ids'][i], text['uuids'][i], prediction[i]] for i in range(len(text['emails']))]
+    res_data = [[text['emails'][i], text['ids'][i], text['uuids'][i]] for i in range(len(text['emails'])) if prediction[i] == 'Yes']
     
     return {
         'statusCode': 200,
