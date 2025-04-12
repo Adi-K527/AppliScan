@@ -3,7 +3,7 @@ name: Deploy to JobRelated Model
 on:
   push:
     branches:
-      - main
+      - asd
 
 env:
   AWS_REGION: ${{ secrets.AWS_REGION }}      
