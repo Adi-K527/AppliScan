@@ -25,7 +25,7 @@ def lambda_handler(event, context):
     response = client.chat.completions.create(
         model="gpt-4o",
         messages=[
-            {"role": "user", "content": f"{emails} \n Extract the company name from these emails, respond with the company names for each email seperated by comma."}
+            {"role": "user", "content": f"{emails} \n\n Extract the company name from these emails, respond with the company names for each email seperated by comma."}
         ]
     )
 
