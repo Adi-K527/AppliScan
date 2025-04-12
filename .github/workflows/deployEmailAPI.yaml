@@ -5,8 +5,8 @@ on:
       branches:
         - asd
         - gmail-api
-        - main
 
+      
 env:
   GOOGLE_CREDENTIALS:  ${{ secrets.GOOGLE_CREDENTIALS }}
   ACCOUNT_ID:          ${{ secrets.ACCOUNT_ID }} 

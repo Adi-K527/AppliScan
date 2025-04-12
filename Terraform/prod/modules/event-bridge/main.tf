@@ -1,5 +1,5 @@
 module "lambda_email_fetcher" {
-  source = "./modules/lambda"
+  source = "../lambda"
   function_name = "email-fetcher"
   source_file   = "./code-files/lambda/email_fetcher.py"
   container_based = false
