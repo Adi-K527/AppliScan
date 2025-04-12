@@ -58,6 +58,29 @@ app.get('/users', async (req, res) => {
   }
 });
 
+
+app.post('/data', async (req, res) => {
+  try {
+    const records = req.body;
+
+    if (!Array.isArray(records)) {
+      return res.status(400).json({ error: 'Expected an array of records.' });
+    }
+
+    // Process each record
+    for (const record of records) {
+      console.log('Processing record:', record);
+    }
+
+    return res.status(200).json({ message: 'Data processed successfully.' });
+
+  } catch (err) {
+    console.error('Error processing data:', err);
+    return res.status(500).json({ error: 'Internal server error.' });
+  }
+});
+
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
