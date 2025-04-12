@@ -43,10 +43,10 @@ def lambda_handler(event, context):
     for i in range(len(prediction)):
         result.append([prediction[i], ids[i], uuids[i], emails[i]])
 
-    with open('output.json', 'w') as f:
-        json.dump(result, f, indent=2)
+    with open('/tmp/output.json', 'w') as f:
+        json.dump({'data': result}, f, indent=2)
 
-    s3_client.upload_file(Filename = 'output.json',
+    s3_client.upload_file(Filename = '/tmp/output.json',
                           Bucket   = "appliscan-model-output-bucket", 
                           Key      = "Job_Status/prediction.json")
     
