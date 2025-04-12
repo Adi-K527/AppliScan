@@ -14,14 +14,17 @@ def lambda_handler(event, context):
 
     print("-------------------------------------    LOG 1   -------------------------------------")
     event = json.loads(event['Records'][0]['body'])
+    event = json.loads(event['Message'])
     print("------ Message -----")
-    print(event['Message'])
+    print(event)
     print("------ Message, responsePayload -----")
-    print(event['Message']['responsePayload'])
-    print("------ Message, responsePayload, body -----")
-    print(event['Message']['responsePayload']['body'])
-    event = json.loads(event['Message']['responsePayload']['body'])
-    print("------ Message, responsePayload, body full event -----")
+    print(event['responsePayload'])
+    event = json.loads(event['responsePayload'])
+    # print("------ Message, responsePayload, body -----")
+    # print(event['Message']['responsePayload']['body'])
+    event = json.loads(event['body'])
+    # print("------ Message, responsePayload, body full event -----")
+    print("by gods grace")
     print(event)
 
     emails = [i[0] for i in event['data']]
