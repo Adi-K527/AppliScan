@@ -13,6 +13,7 @@ const client = new pg.Client({
 client.connect()
 .then(() => console.log('Connected to the database'))
 .catch((err) => console.error('Database connection error', err.stack));
+
 //end point
 app.post('/signup', async (req, res) => {
     console.log(req.body)
