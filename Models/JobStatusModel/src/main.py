@@ -14,6 +14,7 @@ def lambda_handler(event, context):
 
     print("-------------------------------------    LOG 1   -------------------------------------")
     event = json.loads(event['Records'][0]['body'])
+    print(event)
     event = event['Message']['responsePayload']['body']
     print(event)
 
