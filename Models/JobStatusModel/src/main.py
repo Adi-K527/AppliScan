@@ -13,8 +13,8 @@ s3_client = boto3.client('s3')
 def lambda_handler(event, context):
 
     print("-------------------------------------    LOG 1   -------------------------------------")
-    event = json.loads(event['Records'][0]['body']['Message'])
-    print(event)
+    event = json.loads(event['Records'][0]['body'])
+    print(event['Message'])
     event = event['Message']['responsePayload']['body']
     print(event)
 
