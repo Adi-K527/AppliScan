@@ -1,7 +1,9 @@
-const express = require('express');
-const pg = require('pg');
+import express from 'express';
+import pg from 'pg';
+import cors from 'cors';
+
 const app = express();
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
