@@ -1,7 +1,5 @@
 import json
 import boto3
-import joblib
-import numpy as np
 import os
 from openai import OpenAI
 
