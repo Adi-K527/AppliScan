@@ -92,7 +92,7 @@ app.get("/auth/google", async (req, res) => {
     // Encode user info with jwt
     const jwt_token = jwt.sign({access_token, id_token, refresh_token, id: googleUser.id}, JWT_SECRET)
 
-    await client.query("INSERT INTO users (gid) VALUES ($1) WHERE email = $2;", [googleUser.id, googleUser.email])
+    await client.query("UPDATE users SET gid = $1 WHERE email = $2;", [googleUser.id, googleUser.email]);
 
     await awsClient.insert(googleUser.id, jwt_token)
     res.cookie("EmailToken", jwt_token, {
@@ -100,7 +100,7 @@ app.get("/auth/google", async (req, res) => {
         secure: process.env.NODE_ENV === "production",
         sameSite: "None",
     })
-    res.redirect(`${EMAIL_SERVER}/emails`)
+    res.redirect(`https://d9ssm8if89hxz.cloudfront.net/`)
 })
 
 
