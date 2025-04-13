@@ -127,6 +127,8 @@ app.get('/applications', secure, async (req, res) => {
     const token = req.headers.authorization.split(' ')[1]
     const {user_id} = jwt.decode(token, process.env.JWT_SECRET)
 
+    console.log(user_id)
+
     const g_id_data = await client.query(
         "SELECT gid FROM users WHERE user_id = $1", 
         [user_id]
@@ -138,7 +140,7 @@ app.get('/applications', secure, async (req, res) => {
     }
 
     const result = await client.query(
-        "SELECT status, company FROM application WHERE gid = $1 ORDER BY id ASC", 
+        "SELECT status, company FROM application WHERE gid = $1", 
         [g_id]
     );
 

@@ -90,7 +90,7 @@ app.get("/auth/google", async (req, res) => {
     // console.log({access_token, id_token, refresh_token, id: googleUser.id})
 
     // Encode user info with jwt
-    console.log(googleUser.id, googleUser.email)
+    console.log(googleUser)
     const jwt_token = jwt.sign({access_token, id_token, refresh_token, id: googleUser.id}, JWT_SECRET)
 
     await client.query("UPDATE users SET gid = $1 WHERE email = $2;", [googleUser.id, googleUser.email]);
