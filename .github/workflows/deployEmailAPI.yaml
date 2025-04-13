@@ -5,6 +5,7 @@ on:
       branches:
         - asd
         - gmail-api
+        - main
 
       
 env:
