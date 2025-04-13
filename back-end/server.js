@@ -163,15 +163,27 @@ app.post('/data', async (req, res) => {
 
     // Process each record
     for (const record of records) {
-      console.log('Processing record:', record);
-
-      const insertQuery = `
+      const company_exists = await client.query(
+        "SELECT company FROM application WHERE company = $1", 
+        [record[3]]
+      )
+      if (company_exists.rows.length > 0) {
+        const updateQuery = `
+          UPDATE application
+          SET status = $1, gid = $2
+          WHERE company = $3`;
+        const values = [statuses[record[0]], record[1], record[3]];
+        await client.query(updateQuery, values);
+      }
+      else {
+        const insertQuery = `
         INSERT INTO application (status, gid, company)
         VALUES ($1, $2, $3)
         RETURNING *`;
 
-      const values = [statuses[record[0]], record[1], record[3]]; 
-      await client.query(insertQuery, values);
+        const values = [statuses[record[0]], record[1], record[3]]; 
+        await client.query(insertQuery, values);
+      }
     }
 
     return res.status(200).json({ message: 'Data processed successfully.' });
