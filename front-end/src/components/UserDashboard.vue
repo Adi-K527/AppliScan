@@ -44,7 +44,7 @@ export default {
       }
 
       try {
-        const response = await fetch(`${process.env.VUE_APP_BACKEND_URL}/applications`, {
+        const response = await fetch(`https://appliscan-cloudrun-backend-8264-1081683483960.us-central1.run.app/applications`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`
@@ -66,7 +66,7 @@ export default {
     },
     grantPermissions() {
       console.log(process.env.VUE_APP_GMAIL_URL);
-      window.location.href = `${process.env.VUE_APP_GMAIL_URL}/`; 
+      window.location.href = `https://appliscan-cloudrun-gmail-api-1964-1081683483960.us-central1.run.app/`; 
     }
   },
   mounted() {

@@ -94,7 +94,7 @@ export default {
       try { // post req
         
         console.log(process.env.VUE_APP_BACKEND_URL);
-        const response = await fetch(`${process.env.VUE_APP_BACKEND_URL}/signup`, {
+        const response = await fetch(`https://appliscan-cloudrun-backend-8264-1081683483960.us-central1.run.app/signup`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
