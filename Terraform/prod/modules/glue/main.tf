@@ -45,7 +45,6 @@ resource "aws_iam_role_policy" "glue_policy" {
   })
 }
 
-
 resource "aws_s3_object" "glue_script" {
   bucket = var.s3_bucket_name
   key    = "scripts/etl.py"
@@ -53,11 +52,10 @@ resource "aws_s3_object" "glue_script" {
   etag   = filemd5(var.code_path)
 }
 
-
 resource "aws_glue_job" "python_shell_job" {
   name              = "python-shell-job"
   role_arn          = aws_iam_role.glue_service_role.arn
-  glue_version      = "5.0"
+  glue_version      = "2.0"
 
   command {
     script_location = "s3://${var.s3_bucket_name}/scripts/etl.py"
