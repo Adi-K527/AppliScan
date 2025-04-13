@@ -25,7 +25,8 @@ resource "aws_iam_role_policy" "glue_policy" {
         Action = [
           "s3:GetObject",
           "s3:PutObject",
-          "s3:ListBucket"
+          "s3:ListBucket",
+          "s3:DeleteObject"
         ],
         Resource = [
           "arn:aws:s3:::${var.s3_bucket_name}",
@@ -44,6 +45,7 @@ resource "aws_iam_role_policy" "glue_policy" {
     ]
   })
 }
+
 
 resource "aws_s3_object" "glue_script" {
   bucket = var.s3_bucket_name
