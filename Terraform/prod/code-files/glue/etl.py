@@ -48,4 +48,12 @@ df_merged.drop(columns=['uuids'], inplace=True)
 response = requests.post(url='https://appliscan-cloudrun-backend-8264-1081683483960.us-central1.run.app/data',
                          headers={'Content-Type': 'application/json'},
                          json=df_merged.values.tolist())
+
+
+s3_client.delete_object(Bucket   = "appliscan-model-output-bucket",
+                        Key      = "Job_Status/prediction.json")
+
+s3_client.delete_object(Bucket   = "appliscan-model-output-bucket",
+                        Key      = "NER/prediction.json")
+
 print(response.status_code)

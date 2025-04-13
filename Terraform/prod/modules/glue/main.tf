@@ -64,3 +64,16 @@ resource "aws_glue_job" "python_shell_job" {
 
   timeout     = 10
 }
+
+resource "aws_glue_trigger" "every_30_mins" {
+  name     = "every-30-mins-trigger"
+  type     = "SCHEDULED"
+  schedule = "cron(0/30 * * * ? *)" # Every 30 minutes
+
+  actions {
+    job_name = aws_glue_job.python_shell_job.name
+  }
+
+  start_on_creation = true
+}
+
