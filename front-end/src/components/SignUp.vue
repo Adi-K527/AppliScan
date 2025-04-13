@@ -93,7 +93,8 @@ export default {
   
       try { // post req
         
-        const response = await fetch('http://localhost:3000/signup', {
+        console.log(process.env.VUE_APP_BACKEND_URL);
+        const response = await fetch(`${process.env.VUE_APP_BACKEND_URL}/signup`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
@@ -103,6 +104,7 @@ export default {
   
         if (response.ok) {
           console.log('User signed up:', data.user);
+          this.$emit('changeView', 'SignIn'); // redirect to sign in view
           
         } else {
           this.signUpError = data.error;

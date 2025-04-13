@@ -8,13 +8,15 @@
 import SignIn from './components/SignIn.vue'
 import RecoverPassword from './components/RecoverPassword.vue'
 import SignUp from './components/SignUp.vue'
+import UserDashboard from './components/UserDashboard.vue'
 
 export default {
   name: 'App',
   components: {
     SignIn,
     RecoverPassword,
-    SignUp
+    SignUp,
+    UserDashboard
   },
   data() {
     return {

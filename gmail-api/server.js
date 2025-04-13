@@ -7,6 +7,7 @@ import fetch from 'node-fetch';
 import env from 'dotenv';
 import cron from 'node-cron'
 import AWSResourceHandler from './AWSResourceHandler.js';
+import pg from 'pg';
 
 const app = express();
 env.config()
@@ -33,11 +34,17 @@ const SCOPES        = process.env.SCOPES.split(" ") // services we want access t
 const REDIRECT_URI = process.env.REDIRECT_URI || 'http://localhost:3000/auth/google' 
 const EMAIL_SERVER = process.env.EMAIL_SERVER || 'http://localhost:3000'
 
+const client = new pg.Client({
+  connectionString: process.env.DB_URI
+})
+client.connect()
+.then(() => console.log('Connected to the database'))
+.catch((err) => console.error('Database connection error', err.stack));
+
 app.use(cors({credentials: true}))
 app.use(cookieParser())
 
 app.get('/', (req, res) => {
-    // OAuth: allows users to grant third-party apps access to their info on other websites without sharing passwords
     const apiurl  = "https://accounts.google.com/o/oauth2/v2/auth"
     const options = {
         redirect_uri:  REDIRECT_URI,
@@ -45,7 +52,7 @@ app.get('/', (req, res) => {
         access_type:   "offline",
         response_type: "code",
         prompt:        "consent",
-        scope:         SCOPES.join(" ")
+        scope:         SCOPES.join(" "),
     }
     // querystring adds the parameters in the url itself rather than the body
     res.redirect(`${apiurl}?${querystring.stringify(options)}`)
@@ -84,6 +91,9 @@ app.get("/auth/google", async (req, res) => {
 
     // Encode user info with jwt
     const jwt_token = jwt.sign({access_token, id_token, refresh_token, id: googleUser.id}, JWT_SECRET)
+
+    await client.query("INSERT INTO users (gid) VALUES ($1) WHERE email = $2;", [googleUser.id, googleUser.email])
+
     await awsClient.insert(googleUser.id, jwt_token)
     res.cookie("EmailToken", jwt_token, {
         httpOnly: true,

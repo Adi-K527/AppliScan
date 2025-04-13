@@ -42,17 +42,56 @@ export default {
     }
   },
   methods: {
-    handleSignIn() {
+    async handleSignIn() {
       // regex and checking
       if (!this.email.includes('@')) {
         this.signInError = "Email must contain @.";
         return;
       }
       
-      
       this.signInError = "";
-      // what to do after submission
+      
+      const payload = {
+        email: this.email,
+        password: this.password
+      };
+
+      try {
+        const response = await fetch(`${process.env.VUE_APP_BACKEND_URL}/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+
+        console.log("Response from server:", data);
+
+        if (response.ok) {
+          console.log("User signed in:");
+
+          // Optional: store JWT token in cookie or localStorage
+          document.cookie = `AUTH_TOKEN=${data.token}; path=/; max-age=3600; SameSite=Strict`;
+
+          // Optional: redirect or emit changeView
+          this.$emit('authenticated', data.user);
+          this.$emit('changeView', 'UserDashboard');
+
+        } else {
+          this.signInError = data.error || "Invalid credentials.";
+        }
+      } catch (err) {
+        console.error("Sign in failed:", err);
+        this.signInError = "An error occurred. Please try again.";
+      }
+    },
+    mounted() {
+      const match = document.cookie.match(/(?:^|;\s*)AUTH_TOKEN=([^;]*)/);
+      if (match) {
+        this.$emit('changeView', 'UserDashboard');
+      }
     }
+
   }
 }
 </script>

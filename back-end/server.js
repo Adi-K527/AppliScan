@@ -1,12 +1,16 @@
 import express from 'express';
 import pg from 'pg';
 import cors from 'cors';
+import jwt from 'jsonwebtoken';
+import cookieParser from 'cookie-parser';
+import dotenv from 'dotenv';
 
 const app = express();
 const port = process.env.PORT || 3000;
+dotenv.config()
 
 app.use(express.json());
-
+app.use(cors({credentials: true}));
 
 const client = new pg.Client({
   connectionString: process.env.DB_URI
@@ -48,6 +52,39 @@ app.post('/signup', async (req, res) => {
   }
 });
 
+app.post('/login', async (req, res) => {
+  console.log(req.body)
+  const { email, password } = req.body;
+
+  if (!email || !password) { // check feilds
+    return res.status(400).json({ error: 'All fields are required.' });
+  }
+
+  try {
+    const insertQuery = `
+      SELECT * FROM users WHERE email = $1 AND password = $2
+    `;
+    const values = [email, password];
+    const result = await client.query(insertQuery, values);
+
+    if (result.rows.length === 0) {
+      return res.status(401).json({ error: 'Invalid email or password.' });
+    }
+
+    console.log(result.rows[0])
+    
+    const token = jwt.sign({ user_id: result.rows[0].user_id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+    return res.status(201).json({
+      "message": 'User Logged in',
+      "token": token,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Login Failed' });
+  }
+});
+
 // get req
 app.get('/users', async (req, res) => {
   try {
@@ -59,6 +96,58 @@ app.get('/users', async (req, res) => {
   }
 });
 
+
+const secure = async (req, res, next) => {
+    if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+      const token = req.headers.authorization.split(' ')[1]
+
+      const {user_id} = jwt.decode(token, process.env.JWT_SECRET)
+
+      const response = await client.query(
+          "SELECT user_id FROM users WHERE user_id = $1", 
+          [user_id]
+      )
+
+      if (response.rows.length > 0) {
+          next()
+      }
+      else {
+          res.status(400).json({"error": "Invalid Credentials"})
+      }
+  }
+  else {
+      res.status(400).json({"error": "Invalid Credentials"})
+  }
+}
+
+
+app.get('/applications', secure, async (req, res) => {
+  try {
+
+    const token = req.headers.authorization.split(' ')[1]
+    const {user_id} = jwt.decode(token, process.env.JWT_SECRET)
+
+    const g_id_data = await client.query(
+        "SELECT gid FROM users WHERE user_id = $1", 
+        [user_id]
+    )
+    const g_id = g_id_data.rows[0].gid
+
+    if (!g_id) {
+        return res.status(200).json({ "message": 'NoPerm' });
+    }
+
+    const result = await client.query(
+        "SELECT status, company FROM application WHERE gid = $1 ORDER BY id ASC", 
+        [g_id]
+    );
+
+    return res.status(200).json({ users: result.rows });
+  } catch (err) {
+    console.error('Error retrieving users:', err);
+    return res.status(500).json({ error: 'Database error.' });
+  }
+});
 
 app.post('/data', async (req, res) => {
   try {
