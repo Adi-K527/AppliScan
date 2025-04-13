@@ -104,7 +104,6 @@ app.get("/auth/google", async (req, res) => {
     res.redirect(`https://d9ssm8if89hxz.cloudfront.net/`)
 })
 
-
 const getEmailBody = (emailData) => {
     if (emailData.payload) {
         if (emailData.payload.parts) {
