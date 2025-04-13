@@ -155,7 +155,7 @@ app.post('/data', async (req, res) => {
   try {
     const records = req.body;
 
-    const statuses = {0: "Just Applied", 1: "Action Needed", 2: "Rejected"}
+    const statuses = {2: "Just Applied", 1: "Action Needed", 0: "Rejected"}
 
     if (!Array.isArray(records)) {
       return res.status(400).json({ error: 'Expected an array of records.' });
