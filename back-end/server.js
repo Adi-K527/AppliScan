@@ -19,9 +19,11 @@ client.connect()
 .then(() => console.log('Connected to the database'))
 .catch((err) => console.error('Database connection error', err.stack));
 
-//end point
+
+
+// ----------------------------------------- User microservice -----------------------------------------
 app.post('/signup', async (req, res) => {
-    console.log(req.body)
+  console.log(req.body)
   const { firstName, lastName, email, password } = req.body;
   
   
@@ -85,7 +87,7 @@ app.post('/login', async (req, res) => {
   }
 });
 
-// get req
+
 app.get('/users', async (req, res) => {
   try {
     const result = await client.query('SELECT * FROM users ORDER BY id ASC');
@@ -121,6 +123,7 @@ const secure = async (req, res, next) => {
 }
 
 
+// ----------------------------------------- Applications microservice -----------------------------------------
 app.get('/applications', secure, async (req, res) => {
   try {
 
