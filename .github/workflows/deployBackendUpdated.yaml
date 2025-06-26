@@ -50,10 +50,10 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
-            docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG-applications ./back-end/ApplicationsService
-            docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG-applications
-            echo "image_applications=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG-applications" >> $GITHUB_OUTPUT
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.IMAGE_TAG }}applications ./back-end/ApplicationsService
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.IMAGE_TAG }}applications
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:${{ env.IMAGE_TAG }}applications" >> $GITHUB_OUTPUT
 
-            docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG-user ./back-end/UserService
-            docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG-user
-            echo "image_user=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG-user" >> $GITHUB_OUTPUT
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.IMAGE_TAG }}user ./back-end/UserService
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.IMAGE_TAG }}user
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:${{ env.IMAGE_TAG }}user" >> $GITHUB_OUTPUT
