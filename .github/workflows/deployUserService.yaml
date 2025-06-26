@@ -1,4 +1,4 @@
-name: Deploy Backend Updated
+name: Deploy User Service
 
 on:
     push:
@@ -44,20 +44,12 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@62f4f872db3836360b72999f4b87f1ff13310f3a
 
-      - name: Build and push ApplicationsService image
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
         env:
-            ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-            IMAGE_TAG: ${{ github.sha }}
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
         run: |
-            docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:applications ./back-end/ApplicationsService
-            docker push $ECR_REGISTRY/$ECR_REPOSITORY:applications
-            echo "image_applications=$ECR_REGISTRY/$ECR_REPOSITORY:applications" >> $GITHUB_OUTPUT
-
-      - name: Build and push UserService image
-        env:
-            ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-            IMAGE_TAG: ${{ github.sha }}
-        run: |
-            docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:user ./back-end/UserService
-            docker push $ECR_REGISTRY/$ECR_REPOSITORY:user
-            echo "image_user=$ECR_REGISTRY/$ECR_REPOSITORY:user" >> $GITHUB_OUTPUT
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./back-end/UserService
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
