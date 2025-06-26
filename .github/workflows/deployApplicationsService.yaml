@@ -53,6 +53,10 @@ jobs:
           Jwt__Secret: ${{ secrets.JWT_SECRET }}
           Db__Connection: ${{ secrets.DB_CONNECTION_STR }}
         run: |
-          docker build --build-arg Jwt__Secret=$Jwt__Secret --build-arg Db__Connection=$Db__Connection -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./back-end/ApplicationsService
+          docker build \
+            --build-arg Jwt__Secret="${Jwt__Secret}" \
+            --build-arg Db__Connection="${Db__Connection}" \
+            -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
+            ./back-end/ApplicationsService
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
