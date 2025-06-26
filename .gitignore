@@ -10,3 +10,43 @@ Terraform/prod/.terraform/
 Terraform/prod/.terraform.lock.hcl
 node_modules/
 JobData.csv
+
+# Build output
+bin/
+obj/
+
+# Rider / VS Code / Visual Studio
+*.user
+*.suo
+.vscode/
+.idea/
+
+# NuGet packages
+*.nupkg
+packages/
+*.snupkg
+
+# Logs and test results
+*.log
+TestResults/
+
+# User-specific files
+*.userprefs
+
+# Secrets and environment files
+.env
+.env.*
+
+# ASP.NET secrets store (if using `dotnet user-secrets`)
+secrets.json
+
+# dotnet-ef generated migrations cache
+Migrations/*.Designer.cs
+Migrations/*Snapshot.cs
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Others
+*.vs/
