@@ -44,16 +44,20 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@62f4f872db3836360b72999f4b87f1ff13310f3a
 
-      - name: Build, tag, and push image to Amazon ECR
-        id: build-image
+      - name: Build and push ApplicationsService image
         env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: ${{ github.sha }}
+            ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+            IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.IMAGE_TAG }}applications ./back-end/ApplicationsService
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.IMAGE_TAG }}applications
-          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:${{ env.IMAGE_TAG }}applications" >> $GITHUB_OUTPUT
+            docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:applications.$IMAGE_TAG ./back-end/ApplicationsService
+            docker push $ECR_REGISTRY/$ECR_REPOSITORY:applications.$IMAGE_TAG
+            echo "image_applications=$ECR_REGISTRY/$ECR_REPOSITORY:applications.$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.IMAGE_TAG }}user ./back-end/UserService
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.IMAGE_TAG }}user
-          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:${{ env.IMAGE_TAG }}user" >> $GITHUB_OUTPUT
+      - name: Build and push UserService image
+        env:
+            ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+            IMAGE_TAG: ${{ github.sha }}
+        run: |
+            docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:user.$IMAGE_TAG ./back-end/UserService
+            docker push $ECR_REGISTRY/$ECR_REPOSITORY:user.$IMAGE_TAG
+            echo "image_user=$ECR_REGISTRY/$ECR_REPOSITORY:user.$IMAGE_TAG" >> $GITHUB_OUTPUT
