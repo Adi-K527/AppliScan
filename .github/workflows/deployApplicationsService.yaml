@@ -22,6 +22,7 @@ env:
   REDIRECT_URI:        ${{ secrets.REDIRECT_URI }}
   DB_URI:              ${{ secrets.DB_URI }}
   DB_CONNECTION_STR:   ${{ secrets.DB_CONNECTION_STR }}
+  ECR_REPOSITORY:      ${{ secrets.ECR_REPOSITORY }}
 
 jobs:
   deploy:
@@ -49,7 +50,9 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: ${{ github.sha }}
+          Jwt__Secret: ${{ secrets.JWT_SECRET }}
+          Db__Connection: ${{ secrets.DB_CONNECTION_STR }}
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./back-end/ApplicationsService
+          docker build --build-arg Jwt__Secret=$Jwt__Secret --build-arg Db__Connection=$Db__Connection -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./back-end/ApplicationsService
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
