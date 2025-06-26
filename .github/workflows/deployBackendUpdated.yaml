@@ -1,0 +1,59 @@
+name: Deploy Backend Updated
+
+on:
+    push:
+      branches:
+        - backend-bug-fixes
+
+env:
+  GOOGLE_CREDENTIALS:  ${{ secrets.GOOGLE_CREDENTIALS }}
+  ACCOUNT_ID:          ${{ secrets.ACCOUNT_ID }} 
+  ACCESS_KEY:          ${{ secrets.AWS_ACCESS_KEY_ID }}
+  SECRET_ACCESS_KEY:   ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  ECR_NAME:            ${{ secrets.ECR_NAME }}
+  AWS_REGION:          ${{ secrets.AWS_REGION }} 
+  PROJECT_ID:          ${{ secrets.PROJECT_ID }}
+  BACKEND_SERVICE:     ${{ secrets.BACKEND_SERVICE }}
+  ARTIFACT_REGISTRY:   ${{ secrets.ARTIFACT_REGISTRY }}  
+  CLIENT_ID:           ${{ secrets.CLIENT_ID }}
+  CLIENT_SECRET:       ${{ secrets.CLIENT_SECRET }}
+  JWT_SECRET:          ${{ secrets.JWT_SECRET }}
+  SCOPES:              ${{ secrets.SCOPES }}
+  REDIRECT_URI:        ${{ secrets.REDIRECT_URI }}
+  DB_URI:              ${{ secrets.DB_URI }}
+  DB_CONNECTION_STR:   ${{ secrets.DB_CONNECTION_STR }}
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@0e613a0980cbf65ed5b322eb7a1e075d28913a83
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@62f4f872db3836360b72999f4b87f1ff13310f3a
+
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+            docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG-applications ./back-end/ApplicationsService
+            docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG-applications
+            echo "image_applications=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG-applications" >> $GITHUB_OUTPUT
+
+            docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG-user ./back-end/UserService
+            docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG-user
+            echo "image_user=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG-user" >> $GITHUB_OUTPUT
